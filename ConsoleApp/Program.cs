@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ConsoleApp
@@ -57,12 +58,12 @@ namespace ConsoleApp
                     File.Copy(fileName, fileName + ".origin", true);
                     text = text.Replace(param, "", true, null);
                     File.WriteAllText(fileName, text);
-                    Output(string.Format("Text without the word \"{0}\"", param), ConsoleColor.Green);
+                    Output($"Text without the word \"{param}\"", ConsoleColor.Green);
                     Output(text);
                 }
                 else
                 {
-                    OutputError(string.Format("Text does not contain the word \"{0}\"", param));
+                    OutputError($"Text does not contain the word \"{param}\"");
                     Output(text);
                 }
                 #endregion
@@ -99,7 +100,7 @@ namespace ConsoleApp
                     Output("Third sentence:", ConsoleColor.Green);
                     Output(sentence);
 
-                    words = sentence.Split(" ");
+                    words = sentence.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
                     for (int i = 0; i < words.Length; i++)
                     {
@@ -115,10 +116,45 @@ namespace ConsoleApp
 
                 #endregion
 
+                #region 4 task show folder content
+                var path = Console.ReadLine();
+                while (path != "+") 
+                {
+                    var content = new List<string>();
+                    var folders = Directory.GetDirectories(path.Trim('\\') + "\\");
+                    Array.Sort(folders);
+                    content.AddRange(folders);
+                    var files = Directory.GetFiles(path.Trim('\\') + "\\");
+                    Array.Sort(files);
+                    content.AddRange(files);
+                    Output($"-, {path}");
+                    for (int i = 0; i < content.Count; i++)
+                    {
+                        Output($"{i}, {content[i]}");
+                    }
+                    var val = Console.ReadLine();
+                    if (val == "-")
+                    {
+                        if (path.LastIndexOf('\\') != -1) 
+                            path = path.Substring(0, path.LastIndexOf('\\'));
+                    }
+                    else
+                    {
+                        int index;
+                        if (int.TryParse(val, out index) && index >= 0 && index < content.Count)
+                        {
+                            path = content[index];
+                        }
+                        else
+                            path = "+";
+                    }
+                }
+                #endregion
+
             }
             else
             {
-                OutputError(string.Format("File {0} not found", fileName));
+                OutputError($"File {fileName} not found");
             }
 
         }
