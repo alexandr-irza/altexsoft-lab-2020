@@ -18,6 +18,15 @@ namespace ConsoleApp
             Output(msg, ConsoleColor.Red);
         }
 
+        static void PrintOperations()
+        {
+            Output("Available operations:");
+            Output("-replaceText [FileName] [Word]");
+            Output("-countWords [FileName]");
+            Output("-reverseWords [FileName]");
+            Output("-browseFolder [Path]");
+        }
+
         static string ReverseString(string input)
         {
             var res = "";
@@ -30,34 +39,63 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            var fileName = "";
+            var command = "";
+            var path = "";
             var param = "";
             if (args.Length == 0)
             {
-                Output("Enter file name:", ConsoleColor.Yellow);
-                fileName = Console.ReadLine();
-                Output("Enter word to replace:", ConsoleColor.Yellow);
-                param = Console.ReadLine();
+                PrintOperations();
+                Output("Enter operation name or number:", ConsoleColor.Yellow);
+                command = Console.ReadLine();
             }
             else
             {
-                fileName = args[0];
-                param = args[1];
+                command = args[0];
+                if (args.Length > 1)
+                    path = args[1];
+                if (args.Length > 2)
+                    param = args[2];
             }
 
-            fileName = AppDomain.CurrentDomain.BaseDirectory + fileName;
-
-            if (File.Exists(fileName))
+            command = command.ToLower();
+            if (path.Length == 0)
             {
-                var text = File.ReadAllText(fileName);
+                if (command.Contains("browseFolder"))
+                    Output("Enter file name:", ConsoleColor.Yellow);
+                else
+                    Output("Enter folder path:", ConsoleColor.Yellow);
+
+                path = Console.ReadLine();
+            }
+
+            if (command.Contains("replacetext"))
+            { 
+                if (param.Length == 0)
+                {
+                    Output("Enter word to replace:", ConsoleColor.Yellow);
+                    param = Console.ReadLine();
+                }
+            }
+
+
+            if (command.Contains("replacetext"))
+            {
+                path = AppDomain.CurrentDomain.BaseDirectory + path;
+                if (!File.Exists(path))
+                {
+                    OutputError($"File {path} not found");
+                    return;
+                }
+
+                var text = File.ReadAllText(path);
 
                 #region 1 task replace word
                 if (param.Length > 0 && text.Contains(param))
                 {
                     //Store original file
-                    File.Copy(fileName, fileName + ".origin", true);
+                    File.Copy(path, path + ".origin", true);
                     text = text.Replace(param, "", true, null);
-                    File.WriteAllText(fileName, text);
+                    File.WriteAllText(path, text);
                     Output($"Text without the word \"{param}\"", ConsoleColor.Green);
                     Output(text);
                 }
@@ -66,9 +104,19 @@ namespace ConsoleApp
                     OutputError($"Text does not contain the word \"{param}\"");
                     Output(text);
                 }
-                #endregion
-                #region 2 task count words and show every 10
-                text = File.ReadAllText(fileName);
+            }
+            else
+            #endregion
+            #region 2 task count words and show every 10
+            if (command.Contains("countwords"))
+            {
+                path = AppDomain.CurrentDomain.BaseDirectory + path;
+                if (!File.Exists(path))
+                {
+                    OutputError($"File {path} not found");
+                    return;
+                }
+                var text = File.ReadAllText(path);
                 var wordDelimiters = new string[] { " ", ",", ".", ":", "\r\n", Environment.NewLine, "?", "!", "(", ")", "\"" };
 
                 var words = text.Split(wordDelimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -77,7 +125,7 @@ namespace ConsoleApp
                 Output(words.Length.ToString());
 
                 var res = "";
-                
+
                 for (var i = 0; i < words.Length; i = i + 10)
                 {
                     res += (res.Length != 0 ? ", " : "") + words[i];
@@ -85,11 +133,20 @@ namespace ConsoleApp
 
                 Output("Every 10th word separated by comma:", ConsoleColor.Green);
                 Output(res);
-                #endregion
+            }
+            else
+            #endregion
 
-                #region 3 task show third sentence
-
-                text = File.ReadAllText(fileName);
+            #region 3 task show third sentence
+            if (command.Contains("reversewords"))
+            {
+                path = AppDomain.CurrentDomain.BaseDirectory + path;
+                if (!File.Exists(path))
+                {
+                    OutputError($"File {path} not found");
+                    return;
+                }
+                var text = File.ReadAllText(path);
                 var sentenceDelimiters = new string[] { ".", "!", "?" };
 
                 var sentences = text.Split(sentenceDelimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -100,7 +157,7 @@ namespace ConsoleApp
                     Output("Third sentence:", ConsoleColor.Green);
                     Output(sentence);
 
-                    words = sentence.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                    var words = sentence.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
                     for (int i = 0; i < words.Length; i++)
                     {
@@ -113,50 +170,70 @@ namespace ConsoleApp
                 }
                 else
                     OutputError("Sentence #3 does not exist.");
+            }
+            else
+            #endregion
 
-                #endregion
-
-                #region 4 task show folder content
-                var path = Console.ReadLine();
-                while (path != "+") 
+            #region 4 task show folder content
+            if (command.Contains("browsedir"))
+            {
+                Output("Browse Dir (EXIT for terminate):", ConsoleColor.Green);
+                if (!Directory.Exists(path))
+                {
+                    OutputError($"Folder {path} not found");
+                    return;
+                }
+                var folders = new string[] { };
+                var files = new string[] { };
+                while (path.ToLower() != "exit")
                 {
                     var content = new List<string>();
-                    var folders = Directory.GetDirectories(path.Trim('\\') + "\\");
+                    var attr = File.GetAttributes(path);
+                    if (!attr.HasFlag(FileAttributes.Directory))
+                        path = Path.GetDirectoryName(path);
+                    if (path == null)
+                        return;
+                    try
+                    {
+                        folders = Directory.GetDirectories(path.Trim('\\') + "\\");
+                    }
+                    catch
+                    {
+                        folders = new string[] { };
+                    }
                     Array.Sort(folders);
                     content.AddRange(folders);
-                    var files = Directory.GetFiles(path.Trim('\\') + "\\");
+                    try
+                    {
+                        files = Directory.GetFiles(path.Trim('\\') + "\\");
+                    }
+                    catch
+                    {
+                        files = new string[] { };
+                    }
                     Array.Sort(files);
                     content.AddRange(files);
-                    Output($"-, {path}");
+                    if (content.Count > 0)
+                        Output($"-, {path}");
                     for (int i = 0; i < content.Count; i++)
                     {
                         Output($"{i}, {content[i]}");
                     }
                     var val = Console.ReadLine();
-                    if (val == "-")
-                    {
-                        if (path.LastIndexOf('\\') != -1) 
-                            path = path.Substring(0, path.LastIndexOf('\\'));
-                    }
+                    int index;
+                    if (int.TryParse(val, out index) && index >= 0 && index < content.Count)
+                        path = content[index];
                     else
-                    {
-                        int index;
-                        if (int.TryParse(val, out index) && index >= 0 && index < content.Count)
-                        {
-                            path = content[index];
-                        }
-                        else
-                            path = "+";
-                    }
+                        val = "-";
+                    if (val == "-")
+                        path = Path.GetDirectoryName(path);
+                    if (path == null)
+                        return;
                 }
-                #endregion
-
             }
             else
-            {
-                OutputError($"File {fileName} not found");
-            }
-
+                #endregion
+                OutputError("Incorrect operation");
         }
     }
 }
