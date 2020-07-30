@@ -1,8 +1,7 @@
 {
   "profiles": {
     "ConsoleApp": {
-      "commandName": "Project",
-      "commandLineArgs": "browsedir d:\\"
+      "commandName": "Project"
     }
   }
 }
