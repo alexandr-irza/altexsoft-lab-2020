@@ -11,7 +11,7 @@ namespace ConsoleApp.Commands
         {
         }
 
-        public override void DoWork()
+        public override bool DoWork()
         {
             Utils.Output("Browse Dir (EXIT for terminate):", ConsoleColor.Green);
             string[] folders;
@@ -23,11 +23,11 @@ namespace ConsoleApp.Commands
                 if (!attr.HasFlag(FileAttributes.Directory))
                     path = Path.GetDirectoryName(path);
                 if (path == null)
-                    return;
+                    return false;
                 if (!Directory.Exists(path))
                 {
                     Utils.OutputError($"Folder {path} not found");
-                    return;
+                    return false;
                 }
 
                 var content = new List<string>();
@@ -58,6 +58,7 @@ namespace ConsoleApp.Commands
                     Utils.Output($"{i}, {content[i]}");
                 }
                 var val = Console.ReadLine();
+                
                 if (int.TryParse(val, out int index) && index >= 0 && index < content.Count)
                     path = content[index];
                 else
@@ -65,8 +66,9 @@ namespace ConsoleApp.Commands
                 if (val == "-")
                     path = Path.GetDirectoryName(path);
                 if (path == null)
-                    return;
+                    return false;
             }
+            return true;
         }
     }
 }

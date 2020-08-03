@@ -9,7 +9,6 @@ namespace ConsoleApp
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             string command;
@@ -47,23 +46,30 @@ namespace ConsoleApp
             }
 
             CommonCommand cmd;
-            if (command.Equals(CmdCommands.ReplaceText))
-            {
-                if (param.Length == 0)
-                {
-                    Utils.Output("Enter word to replace:", ConsoleColor.Yellow);
-                    param = Console.ReadLine();
-                }
-                cmd = new ReplaceTextCommand(path, param);
+
+            switch (command)
+            { 
+                case CmdCommands.ReplaceText: 
+                    if (param.Length == 0)
+                    {
+                        Utils.Output("Enter word to replace:", ConsoleColor.Yellow);
+                        param = Console.ReadLine();
+                    }
+                    cmd = new ReplaceTextCommand(path, param);
+                    break;
+                case CmdCommands.CountWords:
+                    cmd = new CountWordsCommand(path);
+                    break;
+                case CmdCommands.ReverseWords:
+                    cmd = new ReverseWordsCommand(path);
+                    break;
+                case CmdCommands.BrowseFolder:
+                    cmd = new BrowseFolderCommand(path);
+                    break;
+                default:
+                    cmd = new IncorrectCommand(path);
+                    break;
             }
-            else if (command.Equals(CmdCommands.CountWords))
-                cmd = new CountWordsCommand(path);
-            else if (command.Equals(CmdCommands.ReverseWords))
-                cmd = new ReverseWordsCommand(path);
-            else if (command.Equals(CmdCommands.BrowseFolder))
-                cmd = new BrowseFolderCommand(path);
-            else
-                cmd = new CommonCommand(path);
 
             cmd.DoWork();
         }

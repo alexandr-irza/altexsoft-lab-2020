@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConsoleApp
 {
-    public class CommonCommand
+    public abstract class CommonCommand
     {
         public CommonCommand(string path)
         {
@@ -13,9 +13,6 @@ namespace ConsoleApp
 
         public string Location { get; set; }
 
-        public virtual void DoWork()
-        {
-            Utils.OutputError("Incorrect operation");
-        }
+        public abstract bool DoWork();
     }
 }

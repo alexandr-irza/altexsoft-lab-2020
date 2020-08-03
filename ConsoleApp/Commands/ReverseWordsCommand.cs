@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ConsoleApp.Commands
 {
-    public class ReverseWordsCommand : CommonCommand
+    public class ReverseWordsCommand : BaseCommand
     {
         public ReverseWordsCommand(string path) : base(path)
         {
         }
 
-        public override void DoWork()
+        public override bool DoWork()
         {
-            if (Path.GetDirectoryName(Location) == null)
-                Location = AppDomain.CurrentDomain.BaseDirectory + Location;
-            if (!File.Exists(Location))
+            if (!base.DoWork())
             {
-                Utils.OutputError($"File {Location} not found");
-                return;
+                return false;
             }
             var text = File.ReadAllText(Location);
 
@@ -37,6 +32,7 @@ namespace ConsoleApp.Commands
             }
             else
                 Utils.OutputError("Sentence #3 does not exist.");
+            return true;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ConsoleApp.Commands
 {
-    public class ReplaceTextCommand : CommonCommand
+    public class ReplaceTextCommand : BaseCommand
     {
         public ReplaceTextCommand(string path) : base(path)
         {
@@ -18,14 +18,11 @@ namespace ConsoleApp.Commands
 
         public string TextToReplace { get; set; }
 
-        public override void DoWork()
+        public override bool DoWork()
         {
-            if (Path.GetDirectoryName(Location) == null)
-                Location = AppDomain.CurrentDomain.BaseDirectory + Location;
-            if (!File.Exists(Location))
+            if (!base.DoWork())
             {
-                Utils.OutputError($"File {Location} not found");
-                return;
+                return false;
             }
 
             var text = File.ReadAllText(Location);
@@ -44,6 +41,7 @@ namespace ConsoleApp.Commands
                 Utils.OutputError($"Text does not contain the word \"{TextToReplace}\"");
                 Utils.Output(text);
             }
+            return true;
         }
     }
 }

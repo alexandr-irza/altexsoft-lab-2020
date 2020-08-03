@@ -1,24 +1,23 @@
-﻿using System;
+﻿using ConsoleApp.Commands;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ConsoleApp
 {
-    public class CountWordsCommand : CommonCommand
+    public class CountWordsCommand : BaseCommand
     {
+
         public CountWordsCommand(string path) : base(path)
         {
         }
 
-        public override void DoWork()
+        public override bool DoWork()
         {
-            if (Path.GetDirectoryName(Location) == null)
-                Location = AppDomain.CurrentDomain.BaseDirectory + Location;
-            if (!File.Exists(Location))
+            if(!base.DoWork())
             {
-                Utils.OutputError($"File {Location} not found");
-                return;
+                return false;
             }
             var text = File.ReadAllText(Location);
 
@@ -30,6 +29,7 @@ namespace ConsoleApp
 
             Utils.Output("Every 10th word separated by comma:", ConsoleColor.Green);
             Utils.Output(string.Join(',', words.Where((x, i) => i % 10 == 0)));
+            return true;
         }
     }
 }
