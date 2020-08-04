@@ -1,7 +1,10 @@
-﻿using RecipeBook.Models;
+﻿using RecipeBook.Controllers;
+using RecipeBook.Data;
+using RecipeBook.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace RecipeBook
@@ -10,41 +13,31 @@ namespace RecipeBook
     {
         static void Main(string[] args)
         {
-            var fileName = "categories.json";
-            List<Category> book;
-            if (File.Exists(fileName))
-                book = JsonSerializer.Deserialize<List<Category>>(File.ReadAllText(fileName));
-            else
-            {
-                book = new List<Category>();
+            var d = new DataContext();
+            d.LoadData();
 
-                var c = new Category
-                {
-                    Id = "1",
-                    Name = "Soups"
-                };
-                book.Add(c);
-                c = new Category
-                {
-                    Id = "2",
-                    Name = "Cocteils"
-                };
-                var r = new Recipe
-                {
-                    Id = "1",
-                    Name = "Mohito"
-                };
-                c.Recipes.Add(r);
-                book.Add(c);
+            var cc = new CategoryController(d);
+            var rc = new RecipeController(d);
 
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-                File.WriteAllText(fileName, JsonSerializer.Serialize<List<Category>>(book, options));
+            string categoryId = null;
+            Stack<string> categoriesStack = new Stack<string>();
+            categoriesStack.Push(categoryId);
+            while (categoryId != "exit") {
+                Console.WriteLine($"Category path: {string.Join("/", categoriesStack.ToArray().Reverse())}");
+                var l = cc.GetCategories(categoryId);
+                Console.WriteLine(string.Join(Environment.NewLine, l.Select(x => "Category-> Id: " +x.Id + ", Name: " + x.Name).ToList().ToArray()));
+
+                var ll = rc.GetRecipes(categoryId);
+                Console.WriteLine(string.Join(Environment.NewLine, ll.Select(x => "Recipe-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
+
+                Console.WriteLine();
+                Console.Write("Enter category id: ");
+                categoryId = Console.ReadLine();
+                if (categoryId.ToLower().Equals("-"))
+                    categoryId = categoriesStack.Count > 0 ? categoriesStack.Pop() : null;
+                else
+                    categoriesStack.Push(categoryId);
             }
-
-            Console.WriteLine(book.ToArray().ToString());
         }
     }
 }
