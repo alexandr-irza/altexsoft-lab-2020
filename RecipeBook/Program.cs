@@ -23,20 +23,34 @@ namespace RecipeBook
             Stack<string> categoriesStack = new Stack<string>();
             categoriesStack.Push(categoryId);
             while (categoryId != "exit") {
-                Console.WriteLine($"Category path: {string.Join("/", categoriesStack.ToArray().Reverse())}");
-                var l = cc.GetCategories(categoryId);
-                Console.WriteLine(string.Join(Environment.NewLine, l.Select(x => "Category-> Id: " +x.Id + ", Name: " + x.Name).ToList().ToArray()));
 
-                var ll = rc.GetRecipes(categoryId);
-                Console.WriteLine(string.Join(Environment.NewLine, ll.Select(x => "Recipe-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
+                try
+                {
+                    Console.WriteLine($"Category path: { string.Join("/", categoriesStack.ToArray().Reverse())}");
+                    var l = cc.GetCategories(categoryId);
+                    Console.WriteLine(string.Join(Environment.NewLine, l.Select(x => "Category-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
 
-                Console.WriteLine();
-                Console.Write("Enter category id: ");
-                categoryId = Console.ReadLine();
-                if (categoryId.ToLower().Equals("-"))
-                    categoryId = categoriesStack.Count > 0 ? categoriesStack.Pop() : null;
-                else
-                    categoriesStack.Push(categoryId);
+                    var ll = rc.GetRecipes(categoryId);
+                    Console.WriteLine(string.Join(Environment.NewLine, ll.Select(x => "Recipe-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
+
+                    Console.WriteLine();
+                    Console.Write("Enter category id: ");
+                    categoryId = Console.ReadLine();
+                    if (categoryId.ToLower().Equals("-"))
+                        categoryId = categoriesStack.Count > 0 ? categoriesStack.Pop() : null;
+                    else if (categoryId == "+")
+                    {
+                        Console.Write("New category name: ");
+                        var catName = Console.ReadLine();
+                        cc.CreateCategory(new Category { Name = catName });
+                    }
+                    else
+                        categoriesStack.Push(categoryId);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
     }

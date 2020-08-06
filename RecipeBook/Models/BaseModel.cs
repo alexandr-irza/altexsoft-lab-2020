@@ -4,8 +4,9 @@ using System.Text;
 
 namespace RecipeBook.Models
 {
-    public class Ingredient : BaseModel
+    public class BaseModel
     {
-        public string Amount { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

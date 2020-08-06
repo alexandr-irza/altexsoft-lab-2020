@@ -1,6 +1,7 @@
 ﻿using RecipeBook.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace RecipeBook.Data
 {
@@ -50,5 +51,27 @@ namespace RecipeBook.Data
             AssignEvents();
         }
 
+        private int NextId<T>(ObservableCollection<T> list) where T: BaseModel
+        {
+            if (list.Count == 0)
+                return 1;
+            else
+                return list.Max(x => int.Parse(x.Id)) + 1;
+        }
+
+        public int NextCategoryId()
+        {
+            return NextId(Categories);
+        }
+
+        public int NextRecipeId()
+        {
+            return NextId(Recipes);
+        }
+
+        public int NextIngredientId()
+        {
+            return NextId(Ingredients);
+        }
     }
 }

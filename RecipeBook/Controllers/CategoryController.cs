@@ -23,6 +23,9 @@ namespace RecipeBook.Controllers
             if (Data.Categories.ToList().Find(x => x.Name == category.Name && x.ParentId == category.ParentId) != null)
                 throw new Exception($"Category {category.Name} already exists");
 
+            if (string.IsNullOrEmpty(category.Id)) //AIrza auto generate Id
+                category.Id = Data.NextCategoryId().ToString();
+
             Data.Categories.Add(category);
         }
 

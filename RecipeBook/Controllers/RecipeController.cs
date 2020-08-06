@@ -24,6 +24,9 @@ namespace RecipeBook.Controllers
             if (item != null)
                 throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
 
+            if (string.IsNullOrEmpty(recipe.Id)) //AIrza auto generate Id
+                recipe.Id = Data.NextRecipeId().ToString();
+
             Data.Recipes.Add(recipe);
         }
 

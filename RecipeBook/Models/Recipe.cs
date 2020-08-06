@@ -5,10 +5,8 @@ using System.Text.Json.Serialization;
 
 namespace RecipeBook.Models
 {
-    public class Recipe
+    public class Recipe : BaseModel
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
         public string CategoryId { get; set; }
         [JsonIgnore]
