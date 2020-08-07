@@ -13,45 +13,90 @@ namespace RecipeBook
     {
         static void Main(string[] args)
         {
+
             var d = new DataContext();
-            d.LoadData();
 
-            var cc = new CategoryController(d);
-            var rc = new RecipeController(d);
+            var nc = new NavigationController(d);
 
-            string categoryId = null;
-            Stack<string> categoriesStack = new Stack<string>();
-            categoriesStack.Push(categoryId);
-            while (categoryId != "exit") {
+            BaseModel current = new BaseModel();
+            var index = 0;
+            var list = nc.GetItems(current.Id);
+            PrintCategory(list, list[index]);
 
+            while (true) {
                 try
                 {
-                    Console.WriteLine($"Category path: { string.Join("/", categoriesStack.ToArray().Reverse())}");
-                    var l = cc.GetCategories(categoryId);
-                    Console.WriteLine(string.Join(Environment.NewLine, l.Select(x => "Category-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
+                    var key = Console.ReadKey();
 
-                    var ll = rc.GetRecipes(categoryId);
-                    Console.WriteLine(string.Join(Environment.NewLine, ll.Select(x => "Recipe-> Id: " + x.Id + ", Name: " + x.Name).ToList().ToArray()));
-
-                    Console.WriteLine();
-                    Console.Write("Enter category id: ");
-                    categoryId = Console.ReadLine();
-                    if (categoryId.ToLower().Equals("-"))
-                        categoryId = categoriesStack.Count > 0 ? categoriesStack.Pop() : null;
-                    else if (categoryId == "+")
+                    switch (key.Key)
                     {
-                        Console.Write("New category name: ");
-                        var catName = Console.ReadLine();
-                        cc.CreateCategory(new Category { Name = catName });
+                        case ConsoleKey.DownArrow:
+                            if (list.Count == 0)
+                                continue;
+                            if (++index >= list.Count)
+                                index = list.Count - 1;
+                            current = list[index];
+                            PrintCategory(list, current);
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (list.Count == 0)
+                                continue;
+                            if (--index < 0)
+                                index = 0;
+                            current = list[index];
+                            PrintCategory(list, current);
+                            break;
+                        case ConsoleKey.Enter:
+                            if (current is Recipe)
+                                PrintRecipe(current as Recipe);
+                            else
+                            if (current is Category)
+                            {
+                                list = nc.GetItems(current.Id);
+                                PrintCategory(list, current);
+                            }
+                            break;
+                        case ConsoleKey.Escape:
+                            string rootId = current.Id; 
+                            if (current is Recipe)
+                                rootId = (current as Recipe).CategoryId;
+                            else if (current is Category)
+                                rootId = (current as Category).ParentId;
+                            list = nc.GetItems(rootId);
+                            PrintCategory(list, current);
+                            break;
+                        case ConsoleKey.Q:
+                            return;
+                        default:
+                            break;
                     }
-                    else
-                        categoriesStack.Push(categoryId);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        static void PrintRecipe(Recipe recipe)
+        {
+            Console.Clear();
+            Console.WriteLine("*******************************");
+            Console.WriteLine($"{recipe.Name}");
+            Console.WriteLine("----------Description----------");
+            Console.WriteLine($"{recipe.Description}");
+            Console.WriteLine("--------Ingredients------------");
+            recipe.Ingredients.ForEach(x => Console.WriteLine($"- {x.Ingredient.Name} ({x.Amount})"));
+            Console.WriteLine("-----------Steps---------------");
+            recipe.Directions.ForEach(x => Console.WriteLine($"{x.StepNumber}. {x.StepInstruction}"));
+            Console.WriteLine("*******************************");
+        }
+
+        static void PrintCategory(List<BaseModel> list, BaseModel current)
+        {
+            Console.Clear();
+            list.ForEach(x => Console.WriteLine((x.Id == current.Id && x.GetType() == current.GetType() ? "->" : "  ") + x.ToString()));
+            Console.Write("Up/Down - navigation, Enter - Open, Exc - Back, Q - Exit");
         }
     }
 }

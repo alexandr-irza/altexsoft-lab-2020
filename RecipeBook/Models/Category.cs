@@ -12,5 +12,9 @@ namespace RecipeBook.Models
         public List<Category> Categories { get; set; } = new List<Category>();
         [JsonIgnore]
         public List<Recipe> Recipes { get; set; } = new List<Recipe>();
+        public override string ToString()
+        {
+            return $"Category {Id} - {Name}";
+        }
     }
 }

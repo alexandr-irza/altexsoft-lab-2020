@@ -9,34 +9,50 @@ namespace RecipeBook.Controllers
 {
     public class RecipeController : CommonController
     {
+        public Recipe Recipe { get; }
         public RecipeController(DataContext data) : base(data)
         {
         }
 
-        public List<Recipe> GetRecipes(string categoryId = null)
+        public RecipeController(DataContext data, string recipeId) : base(data)
         {
-            return Data.Recipes.Where(x => x.CategoryId == categoryId).ToList();
+            Recipe = Data.Recipes.SingleOrDefault(x => x.Id == recipeId);
+            if (Recipe == null)
+            {
+                Recipe = new Recipe();
+            }
         }
 
-        public void CreateRecipe(Recipe recipe)
+        public Recipe GetRecipe(string id)
         {
-            var item = Data.Recipes.ToList().Find(x => x.Name == recipe.Name);
-            if (item != null)
-                throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
+            var recipe = Data.Recipes.SingleOrDefault(x => x.Id == id);
+            if (recipe == null)
+                throw new EntryPointNotFoundException();
 
-            if (string.IsNullOrEmpty(recipe.Id)) //AIrza auto generate Id
-                recipe.Id = Data.NextRecipeId().ToString();
-
-            Data.Recipes.Add(recipe);
+            return recipe;
         }
-
-        public void RemoveRecipe(Recipe recipe)
+        public void AddIngredient(string ingredientName, double amount)
         {
-            var item = Data.Recipes.ToList().Find(x => x.Id == recipe.Id);
-            if (item == null)
-                throw new Exception($"Recipe {recipe.Name} has not been found");
+            var product = Data.Ingredients.SingleOrDefault(x => x.Name == ingredientName);
+            if (product == null)
+            {
+                product = new Ingredient { Id = Data.NextIngredientId().ToString(), Name = ingredientName };
+                Data.Ingredients.Add(product);
+                Data.SaveIngredients();
+            }
 
-            Data.Recipes.Remove(item);
+            var recIngr = Data.RecipeIngredients.SingleOrDefault(x => x.IngredientId == product.Id && x.RecipeId == Recipe.Id);
+            if (recIngr != null)
+            {
+                recIngr.Amount += amount;
+            }
+            else
+            {
+                recIngr = new RecipeIngredient { IngredientId = product.Id, RecipeId = Recipe.Id, Amount = amount };
+                Recipe.Ingredients.Add(recIngr);
+                Data.RecipeIngredients.Add(recIngr);
+            }
+            Data.SaveRecipes();
         }
     }
 }

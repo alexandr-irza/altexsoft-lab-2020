@@ -1,57 +1,51 @@
 ﻿using RecipeBook.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace RecipeBook.Data
 {
     public class DataContext
     {
-        public ObservableCollection<Recipe> Recipes { get; set; }
-        public ObservableCollection<Ingredient> Ingredients { get; set; }
-        public ObservableCollection<Category> Categories { get; set; }
+        public List<Recipe> Recipes { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
+        public List<RecipeIngredient> RecipeIngredients { get; set; }
+        public List<Category> Categories { get; set; }
         private string CategoriesFileName { get => "categories.json"; }
         private string RecipesFileName { get => "recipes.json"; }
         private string IngredientsFileName { get => "ingredients.json"; }
+        private string RecipeIngredientsFileName { get => "recipe_ingredients.json"; }
         public DataContext()
-        {
-            Recipes = new ObservableCollection<Recipe>();
-            Ingredients = new ObservableCollection<Ingredient>();
-            Categories = new ObservableCollection<Category>();
-            AssignEvents();
-        }
-
-        private void AssignEvents()
-        {
-            Recipes.CollectionChanged += NotifyRecipesCollectionChanged;
-            Ingredients.CollectionChanged += NotifyIngredientsCollectionChanged;
-            Categories.CollectionChanged += NotifyCategoriesCollectionChanged;
-        }
-
-        private void NotifyCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            DataProcessor.SaveToFile(Categories, CategoriesFileName);
-        }
-
-        private void NotifyIngredientsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            DataProcessor.SaveToFile(Ingredients, IngredientsFileName);
-        }
-
-        private void NotifyRecipesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            DataProcessor.SaveToFile(Recipes, RecipesFileName);
-        }
-
-        public void LoadData()
         {
             Categories = DataProcessor.LoadFromFile<Category>(CategoriesFileName);
             Recipes = DataProcessor.LoadFromFile<Recipe>(RecipesFileName);
             Ingredients = DataProcessor.LoadFromFile<Ingredient>(IngredientsFileName);
-            AssignEvents();
+            RecipeIngredients = DataProcessor.LoadFromFile<RecipeIngredient>(RecipeIngredientsFileName);
+
+            foreach (var recipe in Recipes)
+            {
+                recipe.Ingredients = RecipeIngredients.Where(y => y.RecipeId == recipe.Id).ToList();
+                recipe.Ingredients.ForEach(x => x.Ingredient = Ingredients.Single(y => y.Id == x.IngredientId));
+            }
         }
 
-        private int NextId<T>(ObservableCollection<T> list) where T: BaseModel
+        public void SaveCategories()
+        {
+            DataProcessor.SaveToFile(Categories, CategoriesFileName);
+        }
+
+        public void SaveIngredients()
+        {
+            DataProcessor.SaveToFile(Ingredients, IngredientsFileName);
+        }
+
+        public void SaveRecipes()
+        {
+            DataProcessor.SaveToFile(Recipes, RecipesFileName);
+            DataProcessor.SaveToFile(RecipeIngredients, RecipeIngredientsFileName);
+        }
+
+        private int NextId<T>(List<T> list) where T: BaseModel
         {
             if (list.Count == 0)
                 return 1;

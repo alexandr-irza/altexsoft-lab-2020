@@ -8,7 +8,7 @@ namespace RecipeBook.Data
 {
     public class DataProcessor
     {
-        public static void SaveToFile<T>(ObservableCollection<T> list, string fileName) where T: class
+        public static void SaveToFile<T>(List<T> list, string fileName) where T: class
         {
             var options = new JsonSerializerOptions
             {
@@ -17,13 +17,13 @@ namespace RecipeBook.Data
             File.WriteAllText(fileName, JsonSerializer.Serialize(list, options));
         }
 
-        public static ObservableCollection<T> LoadFromFile<T>(string fileName) where T : class, new()
+        public static List<T> LoadFromFile<T>(string fileName) where T : class, new()
         {
-            ObservableCollection<T> output;
+            List<T> output;
             if (File.Exists(fileName))
-                output = JsonSerializer.Deserialize<ObservableCollection<T>>(File.ReadAllText(fileName));
+                output = JsonSerializer.Deserialize<List<T>>(File.ReadAllText(fileName));
             else
-                output = new ObservableCollection<T>();
+                output = new List<T>();
             return output;
         }
     }
