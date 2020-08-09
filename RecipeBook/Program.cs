@@ -11,17 +11,28 @@ namespace RecipeBook
 {
     class Program
     {
+        static string GetCaregoryId(BaseModel item)
+        {
+            if (item is Recipe)
+                return ((Recipe)item).CategoryId;
+            else
+                return ((Category)item).ParentId;
+        }
         static void Main(string[] args)
         {
 
             var d = new DataContext();
 
             var nc = new NavigationController(d);
+            var cc = new CategoryController(d);
+            var rc = new RecipeController(d);
 
+            Category root = null;
             BaseModel current = new BaseModel();
+            var list = nc.GetItems(root?.Id);
+            current = list.FirstOrDefault();
             var index = 0;
-            var list = nc.GetItems(current.Id);
-            PrintCategory(list, list[index]);
+            PrintCategories(list, current);
 
             while (true) {
                 try
@@ -35,8 +46,9 @@ namespace RecipeBook
                                 continue;
                             if (++index >= list.Count)
                                 index = list.Count - 1;
+
                             current = list[index];
-                            PrintCategory(list, current);
+                            PrintCategories(list, current);
                             break;
                         case ConsoleKey.UpArrow:
                             if (list.Count == 0)
@@ -44,7 +56,7 @@ namespace RecipeBook
                             if (--index < 0)
                                 index = 0;
                             current = list[index];
-                            PrintCategory(list, current);
+                            PrintCategories(list, current);
                             break;
                         case ConsoleKey.Enter:
                             if (current is Recipe)
@@ -52,28 +64,61 @@ namespace RecipeBook
                             else
                             if (current is Category)
                             {
-                                list = nc.GetItems(current.Id);
-                                PrintCategory(list, current);
+                                root = current as Category;
+                                list = nc.GetItems(root?.Id);
+                                current = list.FirstOrDefault();
+                                index = 0;
+                                PrintCategories(list, current);
                             }
                             break;
-                        case ConsoleKey.Escape:
-                            string rootId = current.Id; 
-                            if (current is Recipe)
-                                rootId = (current as Recipe).CategoryId;
-                            else if (current is Category)
-                                rootId = (current as Category).ParentId;
-                            list = nc.GetItems(rootId);
-                            PrintCategory(list, current);
+                        case ConsoleKey.Backspace:
+                            root = root?.Parent;
+                            list = nc.GetItems(root?.Id);
+                            current = list.FirstOrDefault();
+                            index = 0;
+                            PrintCategories(list, current);
                             break;
                         case ConsoleKey.Q:
                             return;
+                        case ConsoleKey.N:
+                            Console.Clear();
+                            OutputLine("Creating a new recipe", ConsoleColor.Blue);
+                            var recipe = EnterRecipe(root?.Id);
+                            recipe = rc.CreateRecipe(recipe);
+                            while (true)
+                            {
+                                var res = EnterIngredient();
+                                rc.AddIngredient(recipe, res.Ingredient, res.Amount);
+                                OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
+                                if (Console.ReadKey().Key != ConsoleKey.Enter)
+                                    break;
+                            }
+                            while (true)
+                            {
+                                var res = EnterStep();
+                                rc.AddDirection(recipe, res);
+                                OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
+                                if (Console.ReadKey().Key != ConsoleKey.Enter)
+                                    break;
+                            }
+                            list = nc.GetItems(root?.Id);
+                            PrintCategories(list, current);
+                            break;
+                        case ConsoleKey.C:
+                            Console.Clear();
+                            OutputLine("Creating a new category", ConsoleColor.Blue);
+                            var category = EnterCategory(root?.Id);
+                            category = cc.CreateCategory(category);
+                            list = nc.GetItems(root?.Id);
+                            PrintCategories(list, current);
+                            break;
                         default:
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    OutputLine($"ERROR: { ex.Message }", ConsoleColor.Red);
                 }
             }
         }
@@ -81,22 +126,81 @@ namespace RecipeBook
         static void PrintRecipe(Recipe recipe)
         {
             Console.Clear();
-            Console.WriteLine("*******************************");
-            Console.WriteLine($"{recipe.Name}");
-            Console.WriteLine("----------Description----------");
-            Console.WriteLine($"{recipe.Description}");
-            Console.WriteLine("--------Ingredients------------");
-            recipe.Ingredients.ForEach(x => Console.WriteLine($"- {x.Ingredient.Name} ({x.Amount})"));
-            Console.WriteLine("-----------Steps---------------");
-            recipe.Directions.ForEach(x => Console.WriteLine($"{x.StepNumber}. {x.StepInstruction}"));
-            Console.WriteLine("*******************************");
+            OutputLine("Backspace - Back, Q - Exit", ConsoleColor.Cyan);
+            OutputLine("*******************************", ConsoleColor.Red);
+            Output("Name: ", ConsoleColor.Green);
+            OutputLine($"{recipe.Name}");
+            Output("Description: ", ConsoleColor.Green);
+            OutputLine($"{recipe.Description}");
+            OutputLine("Ingredients", ConsoleColor.Green);
+            recipe.Ingredients.ForEach(x => OutputLine($"- {x.Ingredient.Name} ({x.Amount})"));
+            OutputLine("Steps", ConsoleColor.Green);
+            recipe.Directions.ForEach(x => OutputLine($"{x.StepNumber}. {x.StepInstruction}"));
+            OutputLine("*******************************", ConsoleColor.Red);
         }
 
-        static void PrintCategory(List<BaseModel> list, BaseModel current)
+        static void OutputLine(string msg, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        static void Output(string msg, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(msg);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        static void PrintCategories(List<BaseModel> list, BaseModel current)
         {
             Console.Clear();
-            list.ForEach(x => Console.WriteLine((x.Id == current.Id && x.GetType() == current.GetType() ? "->" : "  ") + x.ToString()));
-            Console.Write("Up/Down - navigation, Enter - Open, Exc - Back, Q - Exit");
+            OutputLine("Up/Down - Navigation, Enter - Open, Backspace - Back, Q - Exit, N - New recipe, C - New category", ConsoleColor.Cyan);
+            list.ForEach(x => OutputLine((x.Id == current?.Id && x.GetType() == current.GetType() ? "->" : "  ") + x.ToString()));
+        }
+
+        private static (string Ingredient, double Amount) EnterIngredient()
+        {
+            Output("Enter ingredient name: ", ConsoleColor.Yellow);
+            return (Ingredient: Console.ReadLine(), Amount: ParseDouble("Amount"));
+        }
+
+        private static string EnterStep()
+        {
+            Output("Enter step description: ", ConsoleColor.Yellow);
+            return Console.ReadLine();
+        }
+
+        private static Recipe EnterRecipe(string categoryId)
+        {
+            Output("Enter recipe name: ", ConsoleColor.Yellow);
+            var name = Console.ReadLine();
+            Output("Enter Desription name: ", ConsoleColor.Yellow);
+            var desc = Console.ReadLine();
+
+            return new Recipe { Name = name, CategoryId = categoryId, Description = desc} ;
+        }
+        private static Category EnterCategory(string categoryId)
+        {
+            Output("Enter category name: ", ConsoleColor.Yellow);
+            var name = Console.ReadLine();
+
+            return new Category { Name = name, ParentId = categoryId};
+        }
+        private static double ParseDouble(string name)
+        {
+            while (true)
+            {
+                Output($"Enter {name}: ", ConsoleColor.Yellow);
+                if (double.TryParse(Console.ReadLine(), out double value))
+                {
+                    return value;
+                }
+                else
+                {
+                    OutputLine($"Incrrect format {name}", ConsoleColor.Red);
+                }
+            }
         }
     }
 }

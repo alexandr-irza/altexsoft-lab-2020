@@ -9,9 +9,7 @@ namespace RecipeBook.Models
     {
         public string ParentId { get; set; }
         [JsonIgnore]
-        public List<Category> Categories { get; set; } = new List<Category>();
-        [JsonIgnore]
-        public List<Recipe> Recipes { get; set; } = new List<Recipe>();
+        public Category Parent { get; set; }
         public override string ToString()
         {
             return $"Category {Id} - {Name}";

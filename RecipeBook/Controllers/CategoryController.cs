@@ -13,26 +13,30 @@ namespace RecipeBook.Controllers
         {
         }
 
+        public Category GetCategory(string id = null)
+        {
+            return Data.Categories.SingleOrDefault(x => x.Id == id);
+        }
+
         public List<Category> GetCategories(string parentId = null)
         {
              return Data.Categories.Where(x => x.ParentId == parentId).ToList();
         }
-
-        public Category CreateCategory(string categoryName, string parentId)
+        public Category CreateCategory(Category category)
         {
-            if (Data.Categories.ToList().Find(x => x.Name == categoryName && x.ParentId == parentId) != null)
-                throw new Exception($"Category {categoryName} already exists");
-
-            Category category = new Category
-            {
-                Id = Data.NextCategoryId().ToString(),
-                Name = categoryName,
-                ParentId = parentId
-            };
+            if (Data.Categories.ToList().Find(x => string.Equals(x.Name, category.Name, StringComparison.OrdinalIgnoreCase) && x.ParentId == category.ParentId) != null)
+                throw new Exception($"Category {category.Name} already exists");
+            if (string.IsNullOrEmpty(category.Id))
+                category.Id = Data.NextCategoryId().ToString();
 
             Data.Categories.Add(category);
             Data.SaveCategories();
             return category;
+        }
+
+        public Category CreateCategory(string categoryName, string parentId)
+        {
+            return CreateCategory(new Category { Name = categoryName, ParentId = parentId });
         }
 
         public void RemoveCategory(string categoryId)
@@ -45,37 +49,5 @@ namespace RecipeBook.Controllers
             Data.SaveCategories();
         }
 
-        public List<Recipe> GetRecipes(string categoryId = null)
-        {
-            return Data.Recipes.Where(x => x.CategoryId == categoryId).ToList();
-        }
-
-        public Recipe CreateRecipe(string recipeName, string categoryId)
-        {
-            var item = Data.Recipes.ToList().Find(x => x.Name == recipeName);
-            if (item != null)
-                throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
-
-            Recipe recipe = new Recipe
-            {
-                Id = Data.NextRecipeId().ToString(),
-                Name = recipeName,
-                CategoryId = categoryId
-            };
-
-            Data.Recipes.Add(recipe);
-            Data.SaveCategories();
-            return recipe;
-        }
-
-        public void RemoveRecipe(string recipeId)
-        {
-            var item = Data.Recipes.ToList().Find(x => x.Id == recipeId);
-            if (item == null)
-                throw new Exception($"Recipe {recipeId} has not been found");
-
-            Data.Recipes.Remove(item);
-            Data.SaveCategories();
-        }
     }
 }

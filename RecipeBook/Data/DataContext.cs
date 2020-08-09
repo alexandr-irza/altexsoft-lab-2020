@@ -18,6 +18,8 @@ namespace RecipeBook.Data
         public DataContext()
         {
             Categories = DataProcessor.LoadFromFile<Category>(CategoriesFileName);
+            Categories.ForEach(x => x.Parent = Categories.SingleOrDefault(y => y.Id == x.ParentId));
+
             Recipes = DataProcessor.LoadFromFile<Recipe>(RecipesFileName);
             Ingredients = DataProcessor.LoadFromFile<Ingredient>(IngredientsFileName);
             RecipeIngredients = DataProcessor.LoadFromFile<RecipeIngredient>(RecipeIngredientsFileName);
