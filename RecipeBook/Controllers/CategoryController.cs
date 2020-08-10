@@ -1,9 +1,8 @@
-﻿using System;
+﻿using RecipeBook.Data;
+using RecipeBook.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RecipeBook.Data;
-using RecipeBook.Models;
 
 namespace RecipeBook.Controllers
 {
@@ -20,7 +19,7 @@ namespace RecipeBook.Controllers
 
         public List<Category> GetCategories(string parentId = null)
         {
-             return Data.Categories.Where(x => x.ParentId == parentId).ToList();
+            return Data.Categories.Where(x => x.ParentId == parentId).ToList();
         }
         public Category CreateCategory(Category category)
         {
@@ -28,7 +27,8 @@ namespace RecipeBook.Controllers
                 throw new Exception($"Category {category.Name} already exists");
             if (string.IsNullOrEmpty(category.Id))
                 category.Id = Data.NextCategoryId().ToString();
-
+            if (category.Parent == null)
+                category.Parent = Data.Categories.SingleOrDefault(x => x.Id == category.ParentId);
             Data.Categories.Add(category);
             Data.SaveCategories();
             return category;

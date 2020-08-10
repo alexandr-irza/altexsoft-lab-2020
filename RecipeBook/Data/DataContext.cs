@@ -1,6 +1,5 @@
 ﻿using RecipeBook.Models;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace RecipeBook.Data
@@ -47,7 +46,7 @@ namespace RecipeBook.Data
             DataProcessor.SaveToFile(RecipeIngredients, RecipeIngredientsFileName);
         }
 
-        private int NextId<T>(List<T> list) where T: BaseModel
+        private int NextId<T>(List<T> list) where T : BaseModel
         {
             if (list.Count == 0)
                 return 1;

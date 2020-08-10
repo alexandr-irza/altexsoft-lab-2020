@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -8,7 +6,7 @@ namespace RecipeBook.Data
 {
     public class DataProcessor
     {
-        public static void SaveToFile<T>(List<T> list, string fileName) where T: class
+        public static void SaveToFile<T>(List<T> list, string fileName) where T : class
         {
             var options = new JsonSerializerOptions
             {

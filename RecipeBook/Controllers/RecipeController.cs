@@ -1,9 +1,8 @@
-﻿using System;
+﻿using RecipeBook.Data;
+using RecipeBook.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using RecipeBook.Data;
-using RecipeBook.Models;
 
 namespace RecipeBook.Controllers
 {

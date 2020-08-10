@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace RecipeBook.Models
@@ -10,7 +7,7 @@ namespace RecipeBook.Models
     {
         public string Description { get; set; }
         public string CategoryId { get; set; }
-        [JsonIgnore]    
+        [JsonIgnore]
         public List<RecipeIngredient> Ingredients { get; set; } = new List<RecipeIngredient>();
         public List<RecipeStep> Directions { get; set; } = new List<RecipeStep>();
 

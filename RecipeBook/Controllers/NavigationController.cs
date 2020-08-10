@@ -1,26 +1,60 @@
 ﻿using RecipeBook.Data;
 using RecipeBook.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RecipeBook.Controllers
 {
     public class NavigationController : CommonController
     {
+        private int TreeIndex;
+        public BaseModel Current { get; private set; }
+        public Category Root { get; private set; }
+        public List<BaseModel> Tree { get; } = new List<BaseModel>();
         public NavigationController(DataContext data) : base(data)
         {
         }
 
-        public List<BaseModel> GetItems(string rootCategoryId)
+        public void ReloadData(string categoryId = null)
         {
-            var res = new List<BaseModel>();
+            Tree.Clear();
+            Data.Categories.Where(x => x.ParentId == categoryId).ToList().ForEach(x => Tree.Add(x));
+            Data.Recipes.Where(x => x.CategoryId == categoryId).ToList().ForEach(x => Tree.Add(x));
+            Root = Data.Categories.SingleOrDefault(x => x.Id == categoryId);
+            Current = Tree.FirstOrDefault();
+            TreeIndex = 0;
+        }
 
-            Data.Categories.Where(x => x.ParentId == rootCategoryId).ToList().ForEach(x => res.Add(x));
-            Data.Recipes.Where(x => x.CategoryId == rootCategoryId).ToList().ForEach(x => res.Add(x));
+        public bool Next()
+        {
+            if (Tree.Count == 0)
+                return false;
+            if (++TreeIndex >= Tree.Count)
+                TreeIndex = Tree.Count - 1;
 
-            return res;
+            Current = Tree[TreeIndex];
+            return true;
+        }
+        public bool Prev()
+        {
+            if (Tree.Count == 0)
+                return false;
+            if (--TreeIndex < 0)
+                TreeIndex = 0;
+            Current = Tree[TreeIndex];
+            return true;
+        }
+
+        public void Enter()
+        {
+            Root = Current as Category;
+            ReloadData(Root?.Id);
+        }
+
+        public void Exit()
+        {
+            Root = Root?.Parent;
+            ReloadData(Root?.Id);
         }
     }
 }
