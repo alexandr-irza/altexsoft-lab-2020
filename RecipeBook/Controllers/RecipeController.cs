@@ -8,13 +8,13 @@ namespace RecipeBook.Controllers
 {
     public class RecipeController : CommonController
     {
-        public RecipeController(DataContext data) : base(data)
+        public RecipeController(UnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
 
         public Recipe GetRecipe(string id)
         {
-            var recipe = Data.Recipes.SingleOrDefault(x => x.Id == id);
+            var recipe = UnitOfWork.Recipes.Get(id);
             if (recipe == null)
                 throw new EntryPointNotFoundException();
 
@@ -22,19 +22,19 @@ namespace RecipeBook.Controllers
         }
         public List<Recipe> GetRecipes(string categoryId = null)
         {
-            return Data.Recipes.Where(x => x.CategoryId == categoryId).ToList();
+            return UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId).ToList();
         }
 
         public Recipe CreateRecipe(Recipe recipe)
         {
-            var item = Data.Recipes.ToList().Find(x => string.Equals(x.Name, recipe.Name, StringComparison.OrdinalIgnoreCase));
+            var item = UnitOfWork.Recipes.SingleOrDefault(x => string.Equals(x.Name, recipe.Name, StringComparison.OrdinalIgnoreCase));
             if (item != null)
                 throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
             if (string.IsNullOrEmpty(recipe.Id))
-                recipe.Id = Data.NextRecipeId().ToString();
+                recipe.Id = Guid.NewGuid().ToString();
 
-            Data.Recipes.Add(recipe);
-            Data.SaveRecipes();
+            UnitOfWork.Recipes.Add(recipe);
+            UnitOfWork.Save();
             return recipe;
         }
         public Recipe CreateRecipe(string recipeName, string categoryId)
@@ -44,24 +44,23 @@ namespace RecipeBook.Controllers
 
         public void RemoveRecipe(string recipeId)
         {
-            var item = Data.Recipes.ToList().Find(x => x.Id == recipeId);
+            var item = UnitOfWork.Recipes.Get(recipeId);
             if (item == null)
                 throw new Exception($"Recipe {recipeId} has not been found");
 
-            Data.Recipes.Remove(item);
-            Data.SaveRecipes();
+            UnitOfWork.Recipes.Remove(item);
+            UnitOfWork.Save();
         }
         public void AddIngredient(Recipe recipe, string ingredientName, double amount)
         {
-            var product = Data.Ingredients.SingleOrDefault(x => string.Equals(x.Name, ingredientName, StringComparison.OrdinalIgnoreCase));
+            var product = UnitOfWork.Ingredients.SingleOrDefault(x => string.Equals(x.Name, ingredientName, StringComparison.OrdinalIgnoreCase));
             if (product == null)
             {
-                product = new Ingredient { Id = Data.NextIngredientId().ToString(), Name = ingredientName };
-                Data.Ingredients.Add(product);
-                Data.SaveIngredients();
+                product = new Ingredient { Id = Guid.NewGuid().ToString(), Name = ingredientName };
+                UnitOfWork.Ingredients.Add(product);
             }
 
-            var recIngr = Data.RecipeIngredients.SingleOrDefault(x => x.IngredientId == product.Id && x.RecipeId == recipe.Id);
+            var recIngr = UnitOfWork.RecipeIngredients.SingleOrDefault(x => x.IngredientId == product.Id && x.RecipeId == recipe.Id);
             if (recIngr != null)
             {
                 recIngr.Amount += amount;
@@ -70,15 +69,15 @@ namespace RecipeBook.Controllers
             {
                 recIngr = new RecipeIngredient { IngredientId = product.Id, RecipeId = recipe.Id, Amount = amount, Ingredient = product };
                 recipe.Ingredients.Add(recIngr);
-                Data.RecipeIngredients.Add(recIngr);
+                UnitOfWork.RecipeIngredients.Add(recIngr);
             }
-            Data.SaveRecipes();
+            UnitOfWork.Save();
         }
 
         public void AddDirection(Recipe recipe, string stepDesc)
         {
             recipe.Directions.Add(new RecipeStep { StepNumber = recipe.Directions.Count + 1, StepInstruction = stepDesc });
-            Data.SaveRecipes();
+            UnitOfWork.Save();
         }
     }
 }

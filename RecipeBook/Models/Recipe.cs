@@ -13,7 +13,7 @@ namespace RecipeBook.Models
 
         public override string ToString()
         {
-            return $"Recipe {Id} - {Name}";
+            return $"Recipe {Name}";
         }
     }
 }

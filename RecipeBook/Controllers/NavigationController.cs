@@ -7,41 +7,41 @@ namespace RecipeBook.Controllers
 {
     public class NavigationController : CommonController
     {
-        private int TreeIndex;
+        private int _treeIndex;
         public BaseModel Current { get; private set; }
         public Category Root { get; private set; }
         public List<BaseModel> Tree { get; } = new List<BaseModel>();
-        public NavigationController(DataContext data) : base(data)
+        public NavigationController(UnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
 
         public void ReloadData(string categoryId = null)
         {
             Tree.Clear();
-            Data.Categories.Where(x => x.ParentId == categoryId).ToList().ForEach(x => Tree.Add(x));
-            Data.Recipes.Where(x => x.CategoryId == categoryId).ToList().ForEach(x => Tree.Add(x));
-            Root = Data.Categories.SingleOrDefault(x => x.Id == categoryId);
+            UnitOfWork.Categories.GetCategoriesByParentId(categoryId).ToList().ForEach(x => Tree.Add(x));
+            UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId).ToList().ForEach(x => Tree.Add(x));
+            Root = UnitOfWork.Categories.Get(categoryId);
             Current = Tree.FirstOrDefault();
-            TreeIndex = 0;
+            _treeIndex = 0;
         }
 
         public bool Next()
         {
             if (Tree.Count == 0)
                 return false;
-            if (++TreeIndex >= Tree.Count)
-                TreeIndex = Tree.Count - 1;
+            if (++_treeIndex >= Tree.Count)
+                _treeIndex = Tree.Count - 1;
 
-            Current = Tree[TreeIndex];
+            Current = Tree[_treeIndex];
             return true;
         }
         public bool Prev()
         {
             if (Tree.Count == 0)
                 return false;
-            if (--TreeIndex < 0)
-                TreeIndex = 0;
-            Current = Tree[TreeIndex];
+            if (--_treeIndex < 0)
+                _treeIndex = 0;
+            Current = Tree[_treeIndex];
             return true;
         }
 

@@ -2,6 +2,7 @@
 using RecipeBook.Data;
 using RecipeBook.Models;
 using System;
+using System.Text;
 
 namespace RecipeBook
 {
@@ -9,8 +10,9 @@ namespace RecipeBook
     {
         static void Main(string[] args)
         {
-
-            var d = new DataContext();
+            Console.OutputEncoding = Encoding.Unicode;
+            Console.InputEncoding = Encoding.Unicode;
+            var d = new UnitOfWork();
 
             var nc = new NavigationController(d);
             var cc = new CategoryController(d);

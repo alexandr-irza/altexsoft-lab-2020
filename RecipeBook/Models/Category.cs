@@ -9,7 +9,7 @@ namespace RecipeBook.Models
         public Category Parent { get; set; }
         public override string ToString()
         {
-            return $"Category {Id} - {Name}";
+            return $"Category {Name}";
         }
     }
 }

@@ -2,12 +2,12 @@
 
 namespace RecipeBook.Controllers
 {
-    public class CommonController
+    public abstract class CommonController
     {
-        public DataContext Data { get; set; }
-        public CommonController(DataContext data)
+        public UnitOfWork UnitOfWork { get; }
+        public CommonController(UnitOfWork unitOfWork)
         {
-            Data = data;
+            UnitOfWork = unitOfWork;
         }
     }
 }

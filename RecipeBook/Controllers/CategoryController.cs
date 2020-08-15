@@ -8,29 +8,30 @@ namespace RecipeBook.Controllers
 {
     public class CategoryController : CommonController
     {
-        public CategoryController(DataContext data) : base(data)
+        public CategoryController(UnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
 
         public Category GetCategory(string id = null)
         {
-            return Data.Categories.SingleOrDefault(x => x.Id == id);
+            return UnitOfWork.Categories.Get(id);
         }
 
         public List<Category> GetCategories(string parentId = null)
         {
-            return Data.Categories.Where(x => x.ParentId == parentId).ToList();
+            return UnitOfWork.Categories.GetCategoriesByParentId(parentId).ToList();
         }
         public Category CreateCategory(Category category)
         {
-            if (Data.Categories.ToList().Find(x => string.Equals(x.Name, category.Name, StringComparison.OrdinalIgnoreCase) && x.ParentId == category.ParentId) != null)
+            var item = UnitOfWork.Categories.SingleOrDefault(x => string.Equals(x.Name, category.Name, StringComparison.OrdinalIgnoreCase) && x.ParentId == category.ParentId);
+            if (item != null)
                 throw new Exception($"Category {category.Name} already exists");
             if (string.IsNullOrEmpty(category.Id))
-                category.Id = Data.NextCategoryId().ToString();
+                category.Id = Guid.NewGuid().ToString();
             if (category.Parent == null)
-                category.Parent = Data.Categories.SingleOrDefault(x => x.Id == category.ParentId);
-            Data.Categories.Add(category);
-            Data.SaveCategories();
+                category.Parent = UnitOfWork.Categories.SingleOrDefault(x => x.Id == category.ParentId);
+            UnitOfWork.Categories.Add(category);
+            UnitOfWork.Save();
             return category;
         }
 
@@ -41,12 +42,12 @@ namespace RecipeBook.Controllers
 
         public void RemoveCategory(string categoryId)
         {
-            var item = Data.Categories.ToList().Find(x => x.Id == categoryId);
+            var item = UnitOfWork.Categories.SingleOrDefault(x => x.Id == categoryId);
             if (item == null)
                 throw new Exception($"Category {categoryId} has not been found");
 
-            Data.Categories.Remove(item);
-            Data.SaveCategories();
+            UnitOfWork.Categories.Remove(item);
+            UnitOfWork.Save();
         }
 
     }
