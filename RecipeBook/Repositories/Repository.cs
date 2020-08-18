@@ -8,44 +8,44 @@ namespace RecipeBook.Repositories
     public abstract class Repository<T> : IRepository<T> where T : class, new()
     {
         readonly IDataContext _context;
-        List<T> Items { get; set; }
+        readonly List<T> _items;
 
         protected Repository(IDataContext context)
         {
             _context = context;
-            Items = _context.LoadFromFile<T>(typeof(T).Name + ".txt").ToList();
+            _items = _context.LoadFromFile<T>(typeof(T).Name + ".txt").ToList();
         }
         public void Save()
         {
-            _context.SaveToFile(Items, typeof(T).Name + ".txt");
+            _context.SaveToFile(_items, typeof(T).Name + ".txt");
         }
 
         public T Add(T item)
         {
-            Items.Add(item);
+            _items.Add(item);
             return item;
         }
 
         public IEnumerable<T> Find(Func<T, bool> predicate)
         {
-            return Items.Where(predicate);
+            return _items.Where(predicate);
         }
 
         public abstract T Get(string id);
 
         public IEnumerable<T> GetAll()
         {
-            return Items;
+            return _items;
         }
 
         public void Remove(T item)
         {
-            Items.Remove(item);
+            _items.Remove(item);
         }
 
         public T SingleOrDefault(Func<T, bool> predicate)
         {
-            return Items.SingleOrDefault(predicate);
+            return _items.SingleOrDefault(predicate);
         }
 
     }
