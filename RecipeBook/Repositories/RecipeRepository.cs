@@ -8,7 +8,6 @@ namespace RecipeBook.Repositories
     {
         public RecipeRepository(IDataContext context) : base(context)
         {
-
         }
 
         public override Recipe Get(string id)

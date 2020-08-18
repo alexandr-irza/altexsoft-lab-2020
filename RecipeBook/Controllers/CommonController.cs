@@ -4,8 +4,8 @@ namespace RecipeBook.Controllers
 {
     public abstract class CommonController
     {
-        public UnitOfWork UnitOfWork { get; }
-        public CommonController(UnitOfWork unitOfWork)
+        protected UnitOfWork UnitOfWork { get; }
+        protected CommonController(UnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
         }

@@ -175,7 +175,7 @@ namespace RecipeBook
                 }
                 else
                 {
-                    OutputLine($"Incrrect format {name}", ConsoleColor.Red);
+                    OutputLine($"Incorrect format {name}", ConsoleColor.Red);
                 }
             }
         }

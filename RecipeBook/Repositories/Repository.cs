@@ -7,13 +7,17 @@ namespace RecipeBook.Repositories
 {
     public abstract class Repository<T> : IRepository<T> where T : class, new()
     {
-        private IDataContext _context;
-        private List<T> Items { get; set; }
+        readonly IDataContext _context;
+        List<T> Items { get; set; }
 
-        public Repository(IDataContext context)
+        protected Repository(IDataContext context)
         {
             _context = context;
             Items = _context.LoadFromFile<T>(typeof(T).Name + ".txt").ToList();
+        }
+        public void Save()
+        {
+            _context.SaveToFile(Items, typeof(T).Name + ".txt");
         }
 
         public T Add(T item)
@@ -44,9 +48,5 @@ namespace RecipeBook.Repositories
             return Items.SingleOrDefault(predicate);
         }
 
-        public void Save()
-        {
-            _context.SaveToFile(Items, typeof(T).Name + ".txt");
-        }
     }
 }

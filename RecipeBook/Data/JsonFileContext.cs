@@ -15,15 +15,9 @@ namespace RecipeBook.Data
             };
             File.WriteAllText(fileName, JsonSerializer.Serialize(list, options), Encoding.Unicode);
         }
-
-        IEnumerable<T> IDataContext.LoadFromFile<T>(string fileName)
+        public IEnumerable<T> LoadFromFile<T>(string fileName) where T : class, new()
         {
-            List<T> output;
-            if (File.Exists(fileName))
-                output = JsonSerializer.Deserialize<List<T>>(File.ReadAllText(fileName, Encoding.Unicode));
-            else
-                output = new List<T>();
-            return output;
+            return File.Exists(fileName) ? JsonSerializer.Deserialize<List<T>>(File.ReadAllText(fileName, Encoding.Unicode)) : new List<T>();
         }
     }
 }

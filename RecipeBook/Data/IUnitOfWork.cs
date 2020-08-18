@@ -2,12 +2,12 @@
 
 namespace RecipeBook.Data
 {
-    interface IUnitOfWork
+    public interface IUnitOfWork
     {
-        public IRecipeRepository Recipes { get; }
-        public IIngredientRepository Ingredients { get; }
-        public IRecipeIngredientRepository RecipeIngredients { get; }
-        public ICategoryRepository Categories { get; }
+        IRecipeRepository Recipes { get; }
+        IIngredientRepository Ingredients { get; }
+        IRecipeIngredientRepository RecipeIngredients { get; }
+        ICategoryRepository Categories { get; }
 
         void Save();
     }
