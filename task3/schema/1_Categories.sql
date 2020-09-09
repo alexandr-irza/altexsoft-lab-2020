@@ -1,4 +1,4 @@
-USE [RecipeBook]
+﻿USE [RecipeBook]
 GO
 
 /****** Object:  Table [dbo].[Categories]    Script Date: 09.09.2020 23:51:39 ******/

@@ -1,10 +1,10 @@
-DELETE RecipeSteps; --Remove exist recipes
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 1, N'В кипящую воду добавить картошку');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 2, N'Через 20 минут добавить капусту');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (2, 1, N'Овощи залить сметаной с водой');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 1, N'Взбить яйца с сахаром');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 2, N'Добавить муку');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 3, N'Выпикать 20 минут при температуре 180 градусов');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 1, N'Взбить яйца, сахар и мед');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 2, N'Добавить муку');
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 3, N'Выпикать в духовке до готовности');
+п»їDELETE RecipeSteps; --Remove exist recipes
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 1, N'Р’ РєРёРїСЏС‰СѓСЋ РІРѕРґСѓ РґРѕР±Р°РІРёС‚СЊ РєР°СЂС‚РѕС€РєСѓ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 2, N'Р§РµСЂРµР· 20 РјРёРЅСѓС‚ РґРѕР±Р°РІРёС‚СЊ РєР°РїСѓСЃС‚Сѓ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (2, 1, N'РћРІРѕС‰Рё Р·Р°Р»РёС‚СЊ СЃРјРµС‚Р°РЅРѕР№ СЃ РІРѕРґРѕР№');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 1, N'Р’Р·Р±РёС‚СЊ СЏР№С†Р° СЃ СЃР°С…Р°СЂРѕРј');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 2, N'Р”РѕР±Р°РІРёС‚СЊ РјСѓРєСѓ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 3, N'Р’С‹РїРёРєР°С‚СЊ 20 РјРёРЅСѓС‚ РїСЂРё С‚РµРјРїРµСЂР°С‚СѓСЂРµ 180 РіСЂР°РґСѓСЃРѕРІ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 1, N'Р’Р·Р±РёС‚СЊ СЏР№С†Р°, СЃР°С…Р°СЂ Рё РјРµРґ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 2, N'Р”РѕР±Р°РІРёС‚СЊ РјСѓРєСѓ');
+INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (4, 3, N'Р’С‹РїРёРєР°С‚СЊ РІ РґСѓС…РѕРІРєРµ РґРѕ РіРѕС‚РѕРІРЅРѕСЃС‚Рё');
