@@ -1,14 +1,4 @@
-﻿USE [RecipeBook]
-GO
-
-/****** Object:  Table [dbo].[RecipeSteps]    Script Date: 09.09.2020 23:52:16 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[RecipeSteps](
+﻿CREATE TABLE [dbo].[RecipeSteps](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[RecipeId] [int] NOT NULL,
 	[Number] [int] NOT NULL,

@@ -1,14 +1,4 @@
-﻿USE [RecipeBook]
-GO
-
-/****** Object:  Table [dbo].[Categories]    Script Date: 09.09.2020 23:51:39 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Categories](
+﻿CREATE TABLE [dbo].[Categories](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ParentId] [int] NULL,
 	[Name] [nvarchar](100) NOT NULL,

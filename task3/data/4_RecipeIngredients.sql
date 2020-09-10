@@ -11,3 +11,10 @@ INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (4, 1);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (4, 2);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (4, 3);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (4, 10);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (12, 12);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (12, 2);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (11, 13);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (11, 2);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (11, 3);
+INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (11, 5);
+

@@ -1,14 +1,4 @@
-﻿USE [RecipeBook]
-GO
-
-/****** Object:  Table [dbo].[RecipeIngredients]    Script Date: 09.09.2020 23:51:58 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[RecipeIngredients](
+﻿CREATE TABLE [dbo].[RecipeIngredients](
 	[RecipeId] [int] NOT NULL,
 	[IngredientId] [int] NOT NULL,
  CONSTRAINT [UK_RecipeIngredients] UNIQUE NONCLUSTERED 

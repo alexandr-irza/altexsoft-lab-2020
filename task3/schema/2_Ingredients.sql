@@ -1,14 +1,4 @@
-﻿USE [RecipeBook]
-GO
-
-/****** Object:  Table [dbo].[Ingredients]    Script Date: 09.09.2020 23:51:49 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Ingredients](
+﻿CREATE TABLE [dbo].[Ingredients](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](100) NULL,
  CONSTRAINT [PK_Ingredients] PRIMARY KEY CLUSTERED 

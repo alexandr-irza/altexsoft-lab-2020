@@ -10,4 +10,7 @@ INSERT INTO Ingredients (Id, Name) VALUES (7, N'Капуста');
 INSERT INTO Ingredients (Id, Name) VALUES (8, N'Помидор');
 INSERT INTO Ingredients (Id, Name) VALUES (9, N'Перец');
 INSERT INTO Ingredients (Id, Name) VALUES (10, N'Мед');
+INSERT INTO Ingredients (Id, Name) VALUES (11, N'Цукаты');
+INSERT INTO Ingredients (Id, Name) VALUES (12, N'Молоко');
+INSERT INTO Ingredients (Id, Name) VALUES (13, N'Творог');
 SET IDENTITY_INSERT Ingredients OFF;
