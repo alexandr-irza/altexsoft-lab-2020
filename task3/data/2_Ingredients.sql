@@ -1,5 +1,4 @@
-﻿DELETE Ingredients; --Remove exist ingredients
-SET IDENTITY_INSERT Ingredients ON;
+﻿SET IDENTITY_INSERT Ingredients ON;
 INSERT INTO Ingredients (Id, Name) VALUES (1, N'Мука');
 INSERT INTO Ingredients (Id, Name) VALUES (2, N'Сахар');
 INSERT INTO Ingredients (Id, Name) VALUES (3, N'Яйца');

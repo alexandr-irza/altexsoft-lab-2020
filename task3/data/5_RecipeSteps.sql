@@ -1,5 +1,4 @@
-﻿DELETE RecipeSteps; --Remove exist recipes
-INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 1, N'В кипящую воду добавить картошку');
+﻿INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 1, N'В кипящую воду добавить картошку');
 INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (1, 2, N'Через 20 минут добавить капусту');
 INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (2, 1, N'Овощи залить сметаной с водой');
 INSERT INTO RecipeSteps (RecipeId, Number, Description) VALUES (3, 1, N'Взбить яйца с сахаром');

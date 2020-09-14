@@ -1,5 +1,4 @@
-﻿DELETE RecipeIngredients; --Remove exist data
-INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (1, 6);
+﻿INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (1, 6);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (1, 7);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (1, 8);
 INSERT INTO RecipeIngredients (RecipeId, IngredientId) VALUES (1, 9);
