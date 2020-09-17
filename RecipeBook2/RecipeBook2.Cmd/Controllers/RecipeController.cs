@@ -73,11 +73,11 @@ namespace RecipeBook2.Controllers
             if (recIngr != null)
             {
                 recIngr.Amount += amount;
+                UnitOfWork.RecipeIngredients.Update(recIngr);
             }
             else
             {
                 recIngr = new RecipeIngredient { IngredientId = product.Id, RecipeId = recipe.Id, Amount = amount, Ingredient = product };
-                recipe.Ingredients.Add(recIngr);
                 UnitOfWork.RecipeIngredients.Add(recIngr);
             }
             UnitOfWork.Save();
@@ -85,7 +85,7 @@ namespace RecipeBook2.Controllers
 
         public void AddDirection(Recipe recipe, string stepDesc)
         {
-            recipe.Directions.Add(new RecipeStep { RecipeId = recipe.Id, StepNumber = recipe.Directions.Count + 1, StepInstruction = stepDesc });
+            UnitOfWork.RecipeSteps.Add(new RecipeStep { RecipeId = recipe.Id, StepNumber = recipe.Directions?.Count + 1 ?? 1, StepInstruction = stepDesc });
             UnitOfWork.Save();
         }
     }

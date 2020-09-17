@@ -7,8 +7,7 @@ namespace RecipeBook2.Core.Entities
     {
         public int RecipeId { get; set; }
         public int IngredientId { get; set; }
-        [NotMapped]
-        public Ingredient Ingredient { get; set; } = new Ingredient();
+        public virtual Ingredient Ingredient { get; set; }
         public double Amount { get; set; }
     }
 }

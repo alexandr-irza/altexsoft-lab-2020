@@ -1,6 +1,5 @@
 ﻿using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeBook2.Core.Entities
 {
@@ -9,10 +8,9 @@ namespace RecipeBook2.Core.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public int? CategoryId { get; set; }
-        [NotMapped]
-        public List<RecipeIngredient> Ingredients { get; set; } = new List<RecipeIngredient>();
-        public List<RecipeStep> Directions { get; set; } = new List<RecipeStep>();
-
+        public virtual Category Category { get; set; }
+        public virtual List<RecipeIngredient> Ingredients { get; set; }
+        public virtual List<RecipeStep> Directions { get; set; }
         public override string ToString()
         {
             return $"Recipe {Name}";

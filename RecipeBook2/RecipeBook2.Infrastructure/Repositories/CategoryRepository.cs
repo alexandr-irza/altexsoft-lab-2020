@@ -1,4 +1,5 @@
-﻿using RecipeBook2.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
 using RecipeBook2.Infrastructure.Data;
 using System.Collections.Generic;
