@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[RecipeSteps](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[RecipeId] [int] NOT NULL,
-	[Number] [int] NOT NULL,
-	[Description] [nvarchar](max) NULL,
+	[StepNumber] [int] NOT NULL,
+	[StepInstruction] [nvarchar](max) NULL,
  CONSTRAINT [PK_RecipeSteps] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

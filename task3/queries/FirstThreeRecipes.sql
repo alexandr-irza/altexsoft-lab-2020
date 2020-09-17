@@ -14,11 +14,11 @@ AS
 	union all
 	select c.Id, c.ParentId, c.Name, CategoryPath + cast(c.Name as nvarchar(max)) + '\'
 	from Categories c
-	inner join Categories_CTE cc on cc.CategoryId = c.ParentId and (cc.CategoryId = @CategoryId OR cc.CategoryParentId = @CategoryId)
+	inner join Categories_CTE cc on cc.CategoryId = c.ParentId
 )
 
 select x.Id as RecipeId, x.Name as RecipeName, ri.IngredientId, i.Name as IngredientName, x.CategoryId, x.CategoryPath
-from ( select top 50 r.Id, r.Name, c.CategoryId, c.CategoryPath
+from ( select top 3 r.Id, r.Name, c.CategoryId, c.CategoryPath
 	from Recipes r
 	inner join Categories_CTE c on c.CategoryId = r.CategoryId
 	order by c.CategoryPath) x
