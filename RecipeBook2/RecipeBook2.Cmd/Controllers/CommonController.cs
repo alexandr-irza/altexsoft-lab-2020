@@ -1,11 +1,11 @@
-﻿using RecipeBook2.Infrastructure.Repositories;
+﻿using RecipeBook2.Core.Interfaces;
 
 namespace RecipeBook2.Controllers
 {
     public abstract class CommonController
     {
-        protected UnitOfWork UnitOfWork { get; }
-        protected CommonController(UnitOfWork unitOfWork)
+        protected IUnitOfWork UnitOfWork { get; }
+        protected CommonController(IUnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
         }

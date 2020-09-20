@@ -3,10 +3,11 @@ namespace RecipeBook2.Core.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRecipeRepository Recipes { get; }
-        IIngredientRepository Ingredients { get; }
-        IRecipeIngredientRepository RecipeIngredients { get; }
         ICategoryRepository Categories { get; }
+        IIngredientRepository Ingredients { get; }
+        IRecipeRepository Recipes { get; }
+        IRecipeIngredientRepository RecipeIngredients { get; }
+        IRecipeStepRepository RecipeSteps { get; }
         void Save();
     }
 }

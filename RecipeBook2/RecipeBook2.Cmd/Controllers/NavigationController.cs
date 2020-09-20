@@ -1,5 +1,5 @@
 ﻿using RecipeBook2.Core.Entities;
-using RecipeBook2.Infrastructure.Repositories;
+using RecipeBook2.Core.Interfaces;
 using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace RecipeBook2.Controllers
         public BaseEntity Current { get; private set; }
         public Category Root { get; private set; }
         public List<BaseEntity> Tree { get; } = new List<BaseEntity>();
-        public NavigationController(UnitOfWork unitOfWork) : base(unitOfWork)
+        public NavigationController(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
 

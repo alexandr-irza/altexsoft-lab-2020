@@ -1,9 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RecipeBook2.Controllers;
 using RecipeBook2.Core.Entities;
+using RecipeBook2.Core.Interfaces;
 using RecipeBook2.Infrastructure.Data;
-using RecipeBook2.Infrastructure.Repositories;
+using RecipeBook2.Infrastructure.Extensions;
 using System;
 using System.IO;
 using System.Text;
@@ -17,128 +21,129 @@ namespace RecipeBook
             Console.OutputEncoding = Encoding.Unicode;
             Console.InputEncoding = Encoding.Unicode;
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureServices(services =>
+                {
+                    services.AddInfrastructure();
+                })
+                .ConfigureLogging(config =>
+                {
+                    config.ClearProviders();
+                    config.AddConsole();
+                })
                 .Build();
 
-            var connectionString = builder.GetConnectionString("DefaultConnection");
-            
-            var optionsBuilder = new DbContextOptionsBuilder<RecipeBookContext>();
-            var options = optionsBuilder.UseSqlServer(connectionString).Options;
+            var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-            using (var context = new RecipeBookContext(options))
+            var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
+
+            var nc = new NavigationController(unitOfWork);
+            var cc = new CategoryController(unitOfWork);
+            var rc = new RecipeController(unitOfWork);
+
+            nc.ReloadData();
+            PrintTree(nc);
+
+            while (true)
             {
-                var d = new UnitOfWork(context);
-
-                var nc = new NavigationController(d);
-                var cc = new CategoryController(d);
-                var rc = new RecipeController(d);
-
-                nc.ReloadData();
-                PrintTree(nc);
-
-                while (true)
+                try
                 {
-                    try
-                    {
-                        var key = Console.ReadKey();
+                    var key = Console.ReadKey();
 
-                        switch (key.Key)
-                        {
-                            case ConsoleKey.DownArrow:
-                                if (nc.Next())
-                                    PrintTree(nc);
-                                break;
-                            case ConsoleKey.UpArrow:
-                                if (nc.Prev())
-                                    PrintTree(nc);
-                                break;
-                            case ConsoleKey.Enter:
-                                if (nc.Current is Recipe)
-                                {
-                                    PrintRecipe(nc.Current as Recipe);
-                                    Console.ReadLine();
-                                    PrintTree(nc);
-                                }
-                                else
-                                if (nc.Current is Category)
-                                {
-                                    nc.Enter();
-                                    PrintTree(nc);
-                                }
-                                break;
-                            case ConsoleKey.Backspace:
-                                nc.Exit();
-                                PrintTree(nc);
-                                break;
-                            case ConsoleKey.Q:
-                                return;
-                            case ConsoleKey.N:
-                                {
-                                    Console.Clear();
-                                    OutputLine("Creating a new recipe", ConsoleColor.Blue);
-                                    var recipe = EnterRecipe(nc.Root?.Id);
-                                    recipe = rc.CreateRecipe(recipe);
-                                    while (true)
-                                    {
-                                        var res = EnterIngredient();
-                                        rc.AddIngredient(recipe, res.Ingredient, res.Amount);
-                                        OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
-                                        if (Console.ReadKey().Key != ConsoleKey.Enter)
-                                            break;
-                                    }
-                                    while (true)
-                                    {
-                                        var res = EnterStep();
-                                        rc.AddDirection(recipe, res);
-                                        OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
-                                        if (Console.ReadKey().Key != ConsoleKey.Enter)
-                                            break;
-                                    }
-                                    nc.ReloadData(nc.Root?.Id);
-                                    PrintTree(nc);
-                                }
-                                break;
-                            case ConsoleKey.C:
-                                {
-                                    Console.Clear();
-                                    OutputLine("Creating a new category", ConsoleColor.Blue);
-                                    var category = EnterCategory(nc.Root?.Id);
-                                    category = cc.CreateCategory(category);
-                                    nc.ReloadData(nc.Root?.Id);
-                                    PrintTree(nc);
-                                }
-                                break;
-                            case ConsoleKey.Delete:
-                                if (nc.Current is Recipe)
-                                {
-                                    if (EnterDeleteConfirmation().Equals("y"))
-                                    {
-                                        rc.RemoveRecipe(nc.Current.Id);
-                                        nc.ReloadData(nc.Root?.Id);
-                                    }
-                                    PrintTree(nc);
-                                }
-                                else
-                                if (nc.Current is Category)
-                                {
-                                    if (EnterDeleteConfirmation().Equals("y"))
-                                    {
-                                        cc.RemoveCategory(nc.Current.Id);
-                                        nc.ReloadData(nc.Root?.Id);
-                                    }
-                                    PrintTree(nc);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
+                    switch (key.Key)
                     {
-                        OutputLine($"ERROR: { ex.Message }, { ex.InnerException?.Message }", ConsoleColor.Red);
+                        case ConsoleKey.DownArrow:
+                            if (nc.Next())
+                                PrintTree(nc);
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (nc.Prev())
+                                PrintTree(nc);
+                            break;
+                        case ConsoleKey.Enter:
+                            if (nc.Current is Recipe)
+                            {
+                                PrintRecipe(nc.Current as Recipe);
+                                Console.ReadLine();
+                                PrintTree(nc);
+                            }
+                            else
+                            if (nc.Current is Category)
+                            {
+                                nc.Enter();
+                                PrintTree(nc);
+                            }
+                            break;
+                        case ConsoleKey.Backspace:
+                            nc.Exit();
+                            PrintTree(nc);
+                            break;
+                        case ConsoleKey.Q:
+                            return;
+                        case ConsoleKey.N:
+                            {
+                                Console.Clear();
+                                OutputLine("Creating a new recipe", ConsoleColor.Blue);
+                                var recipe = EnterRecipe(nc.Root?.Id);
+                                recipe = rc.CreateRecipe(recipe);
+                                while (true)
+                                {
+                                    var res = EnterIngredient();
+                                    rc.AddIngredient(recipe, res.Ingredient, res.Amount);
+                                    OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
+                                    if (Console.ReadKey().Key != ConsoleKey.Enter)
+                                        break;
+                                }
+                                while (true)
+                                {
+                                    var res = EnterStep();
+                                    rc.AddDirection(recipe, res);
+                                    OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
+                                    if (Console.ReadKey().Key != ConsoleKey.Enter)
+                                        break;
+                                }
+                                nc.ReloadData(nc.Root?.Id);
+                                PrintTree(nc);
+                            }
+                            break;
+                        case ConsoleKey.C:
+                            {
+                                Console.Clear();
+                                OutputLine("Creating a new category", ConsoleColor.Blue);
+                                var category = EnterCategory(nc.Root?.Id);
+                                category = cc.CreateCategory(category);
+                                nc.ReloadData(nc.Root?.Id);
+                                PrintTree(nc);
+                            }
+                            break;
+                        case ConsoleKey.Delete:
+                            if (nc.Current is Recipe)
+                            {
+                                if (EnterDeleteConfirmation().Equals("y"))
+                                {
+                                    rc.RemoveRecipe(nc.Current.Id);
+                                    nc.ReloadData(nc.Root?.Id);
+                                }
+                                PrintTree(nc);
+                            }
+                            else
+                            if (nc.Current is Category)
+                            {
+                                if (EnterDeleteConfirmation().Equals("y"))
+                                {
+                                    cc.RemoveCategory(nc.Current.Id);
+                                    nc.ReloadData(nc.Root?.Id);
+                                }
+                                PrintTree(nc);
+                            }
+                            break;
+                        default:
+                            break;
                     }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"{ ex.Message }, { ex.InnerException?.Message }");
                 }
             }
         }

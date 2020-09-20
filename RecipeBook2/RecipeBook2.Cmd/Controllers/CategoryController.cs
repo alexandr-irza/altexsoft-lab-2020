@@ -1,5 +1,5 @@
 ﻿using RecipeBook2.Core.Entities;
-using RecipeBook2.Infrastructure.Repositories;
+using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace RecipeBook2.Controllers
 {
     public class CategoryController : CommonController
     {
-        public CategoryController(UnitOfWork unitOfWork) : base(unitOfWork)
+        public CategoryController(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
 

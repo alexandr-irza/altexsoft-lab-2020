@@ -6,14 +6,11 @@ namespace RecipeBook2.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public IRecipeRepository Recipes { get; private set; }
-
+        public ICategoryRepository Categories { get; private set; }
         public IIngredientRepository Ingredients { get; private set; }
-
+        public IRecipeRepository Recipes { get; private set; }
         public IRecipeIngredientRepository RecipeIngredients { get; private set; }
         public IRecipeStepRepository RecipeSteps { get; private set; }
-
-        public ICategoryRepository Categories { get; private set; }
 
         public UnitOfWork(RecipeBookContext context)
         {
