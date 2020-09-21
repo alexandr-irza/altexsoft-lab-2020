@@ -8,6 +8,7 @@ using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
 using RecipeBook2.Infrastructure.Data;
 using RecipeBook2.Infrastructure.Extensions;
+using RecipeBook2.Infrastructure.Repositories;
 using System;
 using System.IO;
 using System.Text;
@@ -22,14 +23,20 @@ namespace RecipeBook
             Console.InputEncoding = Encoding.Unicode;
 
             var host = Host.CreateDefaultBuilder(args)
-                .ConfigureServices(services =>
+                .ConfigureAppConfiguration(config =>
+                {
+                    config.SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json")
+                        .AddEnvironmentVariables();
+                })
+                .ConfigureServices((hostContext, services) =>
                 {
                     services.AddInfrastructure();
+                    services.AddContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 })
                 .ConfigureLogging(config =>
                 {
                     config.ClearProviders();
-                    config.AddConsole();
                 })
                 .Build();
 

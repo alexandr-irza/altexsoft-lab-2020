@@ -14,7 +14,7 @@ namespace RecipeBook2.Infrastructure.Data
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<RecipeStep> RecipeSteps { get; set; }
 
-        public RecipeBookContext()
+        public RecipeBookContext(DbContextOptions options): base(options)
         {
             //Database.EnsureDeleted();
             Database.EnsureCreated();
@@ -23,14 +23,6 @@ namespace RecipeBook2.Infrastructure.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLazyLoadingProxies();
-            //AIrza As we use this library with main program, we have access to appsettings file
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            var connectionString = builder.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
