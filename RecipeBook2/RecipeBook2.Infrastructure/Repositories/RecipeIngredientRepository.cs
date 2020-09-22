@@ -11,11 +11,6 @@ namespace RecipeBook2.Infrastructure.Repositories
         {
         }
 
-        public override RecipeIngredient Get(int? id)
-        {
-            return null;
-        }
-
         public IEnumerable<RecipeIngredient> GetRecipeIngredients(int recipeId)
         {
             return Find(x => x.RecipeId == recipeId);
