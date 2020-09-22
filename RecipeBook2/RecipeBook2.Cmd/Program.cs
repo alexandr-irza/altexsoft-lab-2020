@@ -22,23 +22,7 @@ namespace RecipeBook
             Console.OutputEncoding = Encoding.Unicode;
             Console.InputEncoding = Encoding.Unicode;
 
-            var host = Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(config =>
-                {
-                    config.SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json")
-                        .AddEnvironmentVariables();
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddInfrastructure();
-                    services.AddContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
-                })
-                .ConfigureLogging(config =>
-                {
-                    config.ClearProviders();
-                })
-                .Build();
+            var host = CreateHostBuilder(args).Build();
 
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
@@ -244,5 +228,16 @@ namespace RecipeBook
                 }
             }
         }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddInfrastructure(context.Configuration.GetConnectionString("DefaultConnection"));
+                })
+                .ConfigureLogging(config =>
+                {
+                    config.ClearProviders()
+                        .AddConsole();
+                });
     }
 }

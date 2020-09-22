@@ -25,13 +25,11 @@
     <Compile Remove="Migrations\20200921202726_Options for Recipe.Designer.cs" />
     <Compile Remove="Migrations\20200921203942_12.cs" />
     <Compile Remove="Migrations\20200921203942_12.Designer.cs" />
+    <Compile Remove="Migrations\20200922200715_2.cs" />
+    <Compile Remove="Migrations\20200922200715_2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">

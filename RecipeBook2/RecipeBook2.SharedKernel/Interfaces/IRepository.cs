@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RecipeBook2.SharedKernel
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> where T : BaseEntity
     {
         T Get(int? id);
         IEnumerable<T> GetAll();

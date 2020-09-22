@@ -1,5 +1,4 @@
-﻿
-namespace RecipeBook2.Core.Interfaces
+﻿namespace RecipeBook2.Core.Interfaces
 {
     public interface IUnitOfWork
     {

@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using RecipeBook2.Core.Entities;
-using System.IO;
+using RecipeBook2.Infrastructure.Data.Configurations;
 
 namespace RecipeBook2.Infrastructure.Data
 {
@@ -27,8 +25,8 @@ namespace RecipeBook2.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<RecipeIngredient>().ToTable("RecipeIngredients").HasKey(x => new { x.IngredientId, x.RecipeId });
-            modelBuilder.Entity<RecipeIngredient>().Ignore("Id");
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RecipeIngredientConfig());
         }
     }
 }
