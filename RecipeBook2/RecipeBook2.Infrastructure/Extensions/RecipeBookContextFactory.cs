@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using RecipeBook2.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace RecipeBook2.Infrastructure.Extensions
 {
@@ -11,8 +10,15 @@ namespace RecipeBook2.Infrastructure.Extensions
     {
         public RecipeBookContext CreateDbContext(string[] args)
         {
+            // Build config
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../RecipeBook2.Cmd"))
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+                
             var optionsBuilder = new DbContextOptionsBuilder<RecipeBookContext>();
-            optionsBuilder.UseSqlServer("Server=localhost;Database=RecipeBook;Trusted_Connection=True;");
+
+            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
 
             return new RecipeBookContext(optionsBuilder.Options);
         }
