@@ -4,7 +4,7 @@ using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RecipeBook2.Controllers
+namespace RecipeBook2.Core.Controllers
 {
     public class NavigationController : CommonController
     {

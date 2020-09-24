@@ -1,16 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RecipeBook2.Controllers;
+using RecipeBook2.Core.Controllers;
 using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
-using RecipeBook2.Infrastructure.Data;
 using RecipeBook2.Infrastructure.Extensions;
-using RecipeBook2.Infrastructure.Repositories;
 using System;
-using System.IO;
 using System.Text;
 
 namespace RecipeBook
@@ -26,11 +22,9 @@ namespace RecipeBook
 
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-            var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
-
-            var nc = new NavigationController(unitOfWork);
-            var cc = new CategoryController(unitOfWork);
-            var rc = new RecipeController(unitOfWork);
+            var nc = host.Services.GetService<NavigationController>();
+            var cc = host.Services.GetService <CategoryController>();
+            var rc = host.Services.GetService <RecipeController>();
 
             nc.ReloadData();
             PrintTree(nc);

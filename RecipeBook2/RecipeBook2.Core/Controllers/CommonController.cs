@@ -1,6 +1,6 @@
 ﻿using RecipeBook2.Core.Interfaces;
 
-namespace RecipeBook2.Controllers
+namespace RecipeBook2.Core.Controllers
 {
     public abstract class CommonController
     {
