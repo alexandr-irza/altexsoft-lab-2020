@@ -21,9 +21,9 @@ namespace RecipeBook
 
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-            var nc = host.Services.GetService<NavigationController>();
-            var cc = host.Services.GetService <CategoryController>();
-            var rc = host.Services.GetService <RecipeController>();
+            var nc = host.Services.GetRequiredService<NavigationController>();
+            var cc = host.Services.GetRequiredService<CategoryController>();
+            var rc = host.Services.GetRequiredService<RecipeController>();
 
             nc.ReloadData();
             PrintTree(nc);

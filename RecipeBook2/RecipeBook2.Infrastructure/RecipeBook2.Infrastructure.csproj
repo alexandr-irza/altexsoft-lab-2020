@@ -44,4 +44,8 @@
     <ProjectReference Include="..\RecipeBook2.Core\RecipeBook2.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>

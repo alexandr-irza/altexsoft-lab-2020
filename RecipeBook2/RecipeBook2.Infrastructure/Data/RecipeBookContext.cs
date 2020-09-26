@@ -14,7 +14,6 @@ namespace RecipeBook2.Infrastructure.Data
 
         public RecipeBookContext(DbContextOptions options): base(options)
         {
-            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

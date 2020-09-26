@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RecipeBook2.Infrastructure.Data;
 using RecipeBook2.SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RecipeBook2.Infrastructure.Repositories
+namespace RecipeBook2.Infrastructure.Data
 {
     public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity, new()
     {
