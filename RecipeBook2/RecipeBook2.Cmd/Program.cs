@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RecipeBook2.Core.Controllers;
 using RecipeBook2.Core.Entities;
-using RecipeBook2.Core.Interfaces;
 using RecipeBook2.Infrastructure.Extensions;
 using System;
 using System.Text;

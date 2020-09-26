@@ -59,6 +59,7 @@ namespace RecipeBook2.Core.Controllers
             UnitOfWork.Recipes.Update(item);
             UnitOfWork.Save();
         }
+
         public void AddIngredient(Recipe recipe, string ingredientName, double amount)
         {
             var product = UnitOfWork.Ingredients.SingleOrDefault(x => string.Equals(x.Name, ingredientName, StringComparison.OrdinalIgnoreCase));

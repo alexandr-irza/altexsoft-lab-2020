@@ -42,11 +42,6 @@ namespace RecipeBook2.Infrastructure.Repositories
             dbSet.Remove(item);
         }
 
-        public void Save()
-        {
-            context.SaveChanges();
-        }
-
         public T SingleOrDefault(Func<T, bool> predicate)
         {
             return dbSet.SingleOrDefault(predicate);

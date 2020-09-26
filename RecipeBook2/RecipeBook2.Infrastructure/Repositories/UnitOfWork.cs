@@ -6,6 +6,7 @@ namespace RecipeBook2.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly RecipeBookContext context;
         public ICategoryRepository Categories { get; private set; }
         public IIngredientRepository Ingredients { get; private set; }
         public IRecipeRepository Recipes { get; private set; }
@@ -19,14 +20,12 @@ namespace RecipeBook2.Infrastructure.Repositories
             Ingredients = new IngredientRepository(context);
             RecipeIngredients = new RecipeIngredientRepository(context);
             RecipeSteps = new RecipeStepRepository(context);
+            this.context = context;
         }
 
         public void Save()
         {
-            Categories.Save();
-            Ingredients.Save();
-            RecipeIngredients.Save();
-            Recipes.Save();
+            context.SaveChanges();
         }
     }
 }
