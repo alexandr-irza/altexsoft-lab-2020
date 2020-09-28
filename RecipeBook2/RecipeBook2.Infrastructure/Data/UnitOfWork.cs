@@ -1,4 +1,5 @@
-﻿using RecipeBook2.Core.Interfaces;
+﻿using System.Threading.Tasks;
+using RecipeBook2.Core.Interfaces;
 
 namespace RecipeBook2.Infrastructure.Data
 {
@@ -23,9 +24,9 @@ namespace RecipeBook2.Infrastructure.Data
             _context = context;
         }
 
-        public void Save()
+        public Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            return _context.SaveChangesAsync();
         }
     }
 }

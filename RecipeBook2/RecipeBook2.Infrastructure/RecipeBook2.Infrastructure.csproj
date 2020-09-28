@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20200921190102_Init.cs" />
     <Compile Remove="Migrations\20200921190102_Init.Designer.cs" />
     <Compile Remove="Migrations\20200921191434_Init.cs" />
@@ -42,10 +48,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RecipeBook2.Core\RecipeBook2.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

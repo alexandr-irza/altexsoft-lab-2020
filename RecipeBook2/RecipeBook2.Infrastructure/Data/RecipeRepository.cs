@@ -1,6 +1,7 @@
 ﻿using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Infrastructure.Data
 {
@@ -10,10 +11,9 @@ namespace RecipeBook2.Infrastructure.Data
         {
         }
 
-
-        public IEnumerable<Recipe> GetRecipesByCategoryId(int? categoryId)
+        public Task<List<Recipe>> GetRecipesByCategoryId(int? categoryId)
         {
-            return Find(x => x.CategoryId == categoryId);
+            return FindAsync(x => x.CategoryId == categoryId);
         }
     }
 }

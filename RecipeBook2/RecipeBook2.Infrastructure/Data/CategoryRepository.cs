@@ -1,6 +1,7 @@
 ﻿using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Infrastructure.Data
 {
@@ -11,9 +12,9 @@ namespace RecipeBook2.Infrastructure.Data
 
         }
 
-        public IEnumerable<Category> GetCategoriesByParentId(int? parentId)
+        public Task<List<Category>> GetCategoriesByParentId(int? parentId)
         {
-            return Find(x => x.ParentId == parentId);
+            return FindAsync(x => x.ParentId == parentId);
         }
     }
 }

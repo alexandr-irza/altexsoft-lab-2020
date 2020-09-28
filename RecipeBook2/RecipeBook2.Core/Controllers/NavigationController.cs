@@ -3,6 +3,7 @@ using RecipeBook2.Core.Interfaces;
 using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
 {
@@ -16,12 +17,12 @@ namespace RecipeBook2.Core.Controllers
         {
         }
 
-        public void ReloadData(int? categoryId = null)
+        public async Task ReloadDataAsync(int? categoryId = null)
         {
             Tree.Clear();
-            UnitOfWork.Categories.GetCategoriesByParentId(categoryId).ToList().ForEach(x => Tree.Add(x));
-            UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId).ToList().ForEach(x => Tree.Add(x));
-            Root = UnitOfWork.Categories.Get(categoryId);
+            (await UnitOfWork.Categories.GetCategoriesByParentId(categoryId)).ForEach(x => Tree.Add(x));
+            (await UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId)).ForEach(x => Tree.Add(x));
+            Root = await UnitOfWork.Categories.GetAsync(categoryId);
             Current = Tree.FirstOrDefault();
             _treeIndex = 0;
         }
@@ -49,13 +50,13 @@ namespace RecipeBook2.Core.Controllers
         public void Enter()
         {
             Root = Current as Category;
-            ReloadData(Root?.Id);
+            _ = ReloadDataAsync(Root?.Id);
         }
 
         public void Exit()
         {
             Root = Root?.Parent;
-            ReloadData(Root?.Id);
+            _ = ReloadDataAsync(Root?.Id);
         }
     }
 }

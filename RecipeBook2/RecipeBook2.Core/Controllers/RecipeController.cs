@@ -3,6 +3,7 @@ using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
 {
@@ -12,65 +13,65 @@ namespace RecipeBook2.Core.Controllers
         {
         }
 
-        public Recipe GetRecipe(int id)
+        public async Task<Recipe> GetRecipeAsync(int id)
         {
-            var recipe = UnitOfWork.Recipes.Get(id);
+            var recipe = await UnitOfWork.Recipes.GetAsync(id);
             if (recipe == null)
                 throw new EntryPointNotFoundException();
 
             return recipe;
         }
-        public List<Recipe> GetRecipes(int? categoryId = null)
+        public async Task<List<Recipe>> GetRecipesAsync(int? categoryId = null)
         {
-            return UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId).ToList();
+            return await UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId);
         }
 
-        public Recipe CreateRecipe(Recipe recipe)
+        public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
         {
-            var item = UnitOfWork.Recipes.SingleOrDefault(x => string.Equals(x.Name, recipe.Name, StringComparison.OrdinalIgnoreCase));
+            var item = await UnitOfWork.Recipes.SingleOrDefaultAsync(x => x.Name == recipe.Name);
             if (item != null)
                 throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
 
             UnitOfWork.Recipes.Add(recipe);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
             return recipe;
         }
-        public Recipe CreateRecipe(string recipeName, int? categoryId)
+        public async Task<Recipe> CreateRecipeAsync(string recipeName, int? categoryId)
         {
-            return CreateRecipe(new Recipe { Name = recipeName, CategoryId = categoryId });
+            return await CreateRecipeAsync(new Recipe { Name = recipeName, CategoryId = categoryId });
         }
 
-        public void RemoveRecipe(int recipeId)
+        public async Task RemoveRecipeAsync(int recipeId)
         {
-            var item = UnitOfWork.Recipes.Get(recipeId);
+            var item = await UnitOfWork.Recipes.GetAsync(recipeId);
             if (item == null)
                 throw new Exception($"Recipe {recipeId} has not been found");
 
             UnitOfWork.Recipes.Remove(item);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
         }
 
-        public void UpdateRecipe(Recipe recipe)
+        public async Task UpdateRecipeAsync(Recipe recipe)
         {
-            var item = UnitOfWork.Recipes.Get(recipe.Id);
+            var item = await UnitOfWork.Recipes.GetAsync(recipe.Id);
             if (item == null)
                 throw new Exception($"Recipe {recipe.Id} has not been found");
 
             UnitOfWork.Recipes.Update(item);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
         }
 
-        public void AddIngredient(Recipe recipe, string ingredientName, double amount)
+        public async void AddIngredient(Recipe recipe, string ingredientName, double amount)
         {
-            var product = UnitOfWork.Ingredients.SingleOrDefault(x => string.Equals(x.Name, ingredientName, StringComparison.OrdinalIgnoreCase));
+            var product = await UnitOfWork.Ingredients.SingleOrDefaultAsync(x => x.Name == ingredientName);
             if (product == null)
             {
                 product = new Ingredient { Name = ingredientName };
                 UnitOfWork.Ingredients.Add(product);
-                UnitOfWork.Save();
+                await UnitOfWork.SaveChangesAsync();
             }
 
-            var recIngr = UnitOfWork.RecipeIngredients.SingleOrDefault(x => x.IngredientId == product.Id && x.RecipeId == recipe.Id);
+            var recIngr = await UnitOfWork.RecipeIngredients.SingleOrDefaultAsync(x => x.IngredientId == product.Id && x.RecipeId == recipe.Id);
             if (recIngr != null)
             {
                 recIngr.Amount += amount;
@@ -81,13 +82,13 @@ namespace RecipeBook2.Core.Controllers
                 recIngr = new RecipeIngredient { IngredientId = product.Id, RecipeId = recipe.Id, Amount = amount, Ingredient = product };
                 UnitOfWork.RecipeIngredients.Add(recIngr);
             }
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
         }
 
         public void AddDirection(Recipe recipe, string stepDesc)
         {
             UnitOfWork.RecipeSteps.Add(new RecipeStep { RecipeId = recipe.Id, StepNumber = recipe.Directions?.Count + 1 ?? 1, StepInstruction = stepDesc });
-            UnitOfWork.Save();
+            UnitOfWork.SaveChangesAsync();
         }
     }
 }

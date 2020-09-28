@@ -1,4 +1,6 @@
-﻿namespace RecipeBook2.Core.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace RecipeBook2.Core.Interfaces
 {
     public interface IUnitOfWork
     {
@@ -7,6 +9,6 @@
         IRecipeRepository Recipes { get; }
         IRecipeIngredientRepository RecipeIngredients { get; }
         IRecipeStepRepository RecipeSteps { get; }
-        void Save();
+        Task SaveChangesAsync();
     }
 }

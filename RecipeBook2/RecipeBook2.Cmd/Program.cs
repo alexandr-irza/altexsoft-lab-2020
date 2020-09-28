@@ -12,7 +12,7 @@ namespace RecipeBook
 {
     class Program
     {
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
             Console.InputEncoding = Encoding.Unicode;
@@ -25,7 +25,7 @@ namespace RecipeBook
             var cc = host.Services.GetRequiredService<CategoryController>();
             var rc = host.Services.GetRequiredService<RecipeController>();
 
-            nc.ReloadData();
+            await nc.ReloadDataAsync();
             PrintTree(nc);
 
             while (true)
@@ -69,7 +69,7 @@ namespace RecipeBook
                                 Console.Clear();
                                 OutputLine("Creating a new recipe", ConsoleColor.Blue);
                                 var recipe = EnterRecipe(nc.Root?.Id);
-                                recipe = rc.CreateRecipe(recipe);
+                                recipe = await rc.CreateRecipeAsync(recipe);
                                 while (true)
                                 {
                                     var res = EnterIngredient();
@@ -86,7 +86,7 @@ namespace RecipeBook
                                     if (Console.ReadKey().Key != ConsoleKey.Enter)
                                         break;
                                 }
-                                nc.ReloadData(nc.Root?.Id);
+                                await nc.ReloadDataAsync(nc.Root?.Id);
                                 PrintTree(nc);
                             }
                             break;
@@ -95,8 +95,8 @@ namespace RecipeBook
                                 Console.Clear();
                                 OutputLine("Creating a new category", ConsoleColor.Blue);
                                 var category = EnterCategory(nc.Root?.Id);
-                                category = cc.CreateCategory(category);
-                                nc.ReloadData(nc.Root?.Id);
+                                category = await cc.CreateCategoryAsync(category);
+                                await nc.ReloadDataAsync(nc.Root?.Id);
                                 PrintTree(nc);
                             }
                             break;
@@ -105,8 +105,8 @@ namespace RecipeBook
                             {
                                 if (EnterDeleteConfirmation().Equals("y"))
                                 {
-                                    rc.RemoveRecipe(nc.Current.Id);
-                                    nc.ReloadData(nc.Root?.Id);
+                                    await rc.RemoveRecipeAsync(nc.Current.Id);
+                                    await nc.ReloadDataAsync(nc.Root?.Id);
                                 }
                                 PrintTree(nc);
                             }
@@ -116,7 +116,7 @@ namespace RecipeBook
                                 if (EnterDeleteConfirmation().Equals("y"))
                                 {
                                     cc.RemoveCategory(nc.Current.Id);
-                                    nc.ReloadData(nc.Root?.Id);
+                                    await nc.ReloadDataAsync(nc.Root?.Id);
                                 }
                                 PrintTree(nc);
                             }

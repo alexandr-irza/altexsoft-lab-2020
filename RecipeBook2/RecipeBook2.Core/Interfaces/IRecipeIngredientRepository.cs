@@ -1,11 +1,12 @@
 ﻿using RecipeBook2.Core.Entities;
 using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Interfaces
 {
     public interface IRecipeIngredientRepository : IRepository<RecipeIngredient>
     {
-        IEnumerable<RecipeIngredient> GetRecipeIngredients(int recipeId);
+        Task<List<RecipeIngredient>> GetRecipeIngredients(int recipeId);
     }
 }

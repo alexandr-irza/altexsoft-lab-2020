@@ -3,6 +3,7 @@ using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
 {
@@ -12,49 +13,49 @@ namespace RecipeBook2.Core.Controllers
         {
         }
 
-        public Category GetCategory(int id)
+        public async Task<Category> GetCategoryAsync(int id)
         {
-            return UnitOfWork.Categories.Get(id);
+            return await UnitOfWork.Categories.GetAsync(id);
         }
 
-        public List<Category> GetCategories(int parentId)
+        public async Task<List<Category>> GetCategoriesAsync(int parentId)
         {
-            return UnitOfWork.Categories.GetCategoriesByParentId(parentId).ToList();
+            return await UnitOfWork.Categories.GetCategoriesByParentId(parentId);
         }
-        public Category CreateCategory(Category category)
+        public async Task<Category> CreateCategoryAsync(Category category)
         {
-            var item = UnitOfWork.Categories.SingleOrDefault(x => string.Equals(x.Name, category.Name, StringComparison.OrdinalIgnoreCase) && x.ParentId == category.ParentId);
+            var item = await UnitOfWork.Categories.SingleOrDefaultAsync(x => x.Name == category.Name && x.ParentId == category.ParentId);
             if (item != null)
                 throw new Exception($"Category {category.Name} already exists");
             if (category.Parent == null)
-                category.Parent = UnitOfWork.Categories.SingleOrDefault(x => x.Id == category.ParentId);
+                category.Parent = await UnitOfWork.Categories.GetAsync(category.ParentId);
             UnitOfWork.Categories.Add(category);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
             return category;
         }
 
-        public Category CreateCategory(string categoryName, int parentId)
+        public async Task<Category> CreateCategoryAsync(string categoryName, int parentId)
         {
-            return CreateCategory(new Category { Name = categoryName, ParentId = parentId });
+            return await CreateCategoryAsync(new Category { Name = categoryName, ParentId = parentId });
         }
 
-        public void RemoveCategory(int categoryId)
+        public async void RemoveCategory(int categoryId)
         {
-            var item = UnitOfWork.Categories.Get(categoryId);
+            var item = await UnitOfWork.Categories.GetAsync(categoryId);
             if (item == null)
                 throw new Exception($"Category {categoryId} has not been found");
 
             UnitOfWork.Categories.Remove(item);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
         }
 
-        public void UpdateCategory(Category category)
+        public async void UpdateCategory(Category category)
         {
-            var item = UnitOfWork.Categories.Get(category.Id);
+            var item = await UnitOfWork.Categories.GetAsync(category.Id);
             if (item == null)
                 throw new Exception($"Category {category.Id} has not been found");
             UnitOfWork.Categories.Update(category);
-            UnitOfWork.Save();
+            await UnitOfWork.SaveChangesAsync();
         }
 
     }
