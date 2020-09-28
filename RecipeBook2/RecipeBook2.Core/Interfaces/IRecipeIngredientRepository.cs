@@ -7,6 +7,6 @@ namespace RecipeBook2.Core.Interfaces
 {
     public interface IRecipeIngredientRepository : IRepository<RecipeIngredient>
     {
-        Task<List<RecipeIngredient>> GetRecipeIngredients(int recipeId);
+        Task<List<RecipeIngredient>> GetRecipeIngredientsAsync(int recipeId);
     }
 }

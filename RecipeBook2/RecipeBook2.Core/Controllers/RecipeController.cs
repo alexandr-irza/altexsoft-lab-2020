@@ -2,7 +2,6 @@
 using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
@@ -23,11 +22,13 @@ namespace RecipeBook2.Core.Controllers
         }
         public async Task<List<Recipe>> GetRecipesAsync(int? categoryId = null)
         {
-            return await UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId);
+            return await UnitOfWork.Recipes.GetRecipesByCategoryIdAsync(categoryId);
         }
 
         public async Task<Recipe> CreateRecipeAsync(Recipe recipe)
         {
+            if (recipe == null)
+                throw new ArgumentNullException();
             var item = await UnitOfWork.Recipes.SingleOrDefaultAsync(x => x.Name == recipe.Name);
             if (item != null)
                 throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
@@ -61,7 +62,7 @@ namespace RecipeBook2.Core.Controllers
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async void AddIngredient(Recipe recipe, string ingredientName, double amount)
+        public async Task AddIngredientAsync(Recipe recipe, string ingredientName, double amount)
         {
             var product = await UnitOfWork.Ingredients.SingleOrDefaultAsync(x => x.Name == ingredientName);
             if (product == null)
@@ -85,10 +86,10 @@ namespace RecipeBook2.Core.Controllers
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public void AddDirection(Recipe recipe, string stepDesc)
+        public async Task AddDirectionAsync(Recipe recipe, string stepDesc)
         {
             UnitOfWork.RecipeSteps.Add(new RecipeStep { RecipeId = recipe.Id, StepNumber = recipe.Directions?.Count + 1 ?? 1, StepInstruction = stepDesc });
-            UnitOfWork.SaveChangesAsync();
+            await UnitOfWork.SaveChangesAsync();
         }
     }
 }

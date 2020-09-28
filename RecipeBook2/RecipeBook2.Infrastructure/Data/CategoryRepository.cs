@@ -12,7 +12,7 @@ namespace RecipeBook2.Infrastructure.Data
 
         }
 
-        public Task<List<Category>> GetCategoriesByParentId(int? parentId)
+        public Task<List<Category>> GetCategoriesByParentIdAsync(int? parentId)
         {
             return FindAsync(x => x.ParentId == parentId);
         }

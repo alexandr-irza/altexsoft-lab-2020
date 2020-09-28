@@ -7,6 +7,6 @@ namespace RecipeBook2.Core.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category>
     {
-        Task<List<Category>> GetCategoriesByParentId(int? parentId);
+        Task<List<Category>> GetCategoriesByParentIdAsync(int? parentId);
     }
 }

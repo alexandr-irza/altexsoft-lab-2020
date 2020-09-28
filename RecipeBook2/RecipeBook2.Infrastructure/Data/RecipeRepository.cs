@@ -11,7 +11,7 @@ namespace RecipeBook2.Infrastructure.Data
         {
         }
 
-        public Task<List<Recipe>> GetRecipesByCategoryId(int? categoryId)
+        public Task<List<Recipe>> GetRecipesByCategoryIdAsync(int? categoryId)
         {
             return FindAsync(x => x.CategoryId == categoryId);
         }

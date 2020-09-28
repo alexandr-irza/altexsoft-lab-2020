@@ -2,7 +2,6 @@
 using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
@@ -20,10 +19,12 @@ namespace RecipeBook2.Core.Controllers
 
         public async Task<List<Category>> GetCategoriesAsync(int parentId)
         {
-            return await UnitOfWork.Categories.GetCategoriesByParentId(parentId);
+            return await UnitOfWork.Categories.GetCategoriesByParentIdAsync(parentId);
         }
         public async Task<Category> CreateCategoryAsync(Category category)
         {
+            if (category == null)
+                throw new ArgumentNullException();
             var item = await UnitOfWork.Categories.SingleOrDefaultAsync(x => x.Name == category.Name && x.ParentId == category.ParentId);
             if (item != null)
                 throw new Exception($"Category {category.Name} already exists");
@@ -39,7 +40,7 @@ namespace RecipeBook2.Core.Controllers
             return await CreateCategoryAsync(new Category { Name = categoryName, ParentId = parentId });
         }
 
-        public async void RemoveCategory(int categoryId)
+        public async Task RemoveCategoryAsync(int categoryId)
         {
             var item = await UnitOfWork.Categories.GetAsync(categoryId);
             if (item == null)
@@ -49,7 +50,7 @@ namespace RecipeBook2.Core.Controllers
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async void UpdateCategory(Category category)
+        public async Task UpdateCategoryAsync(Category category)
         {
             var item = await UnitOfWork.Categories.GetAsync(category.Id);
             if (item == null)
@@ -57,6 +58,5 @@ namespace RecipeBook2.Core.Controllers
             UnitOfWork.Categories.Update(category);
             await UnitOfWork.SaveChangesAsync();
         }
-
     }
 }

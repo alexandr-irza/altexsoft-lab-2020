@@ -20,8 +20,8 @@ namespace RecipeBook2.Core.Controllers
         public async Task ReloadDataAsync(int? categoryId = null)
         {
             Tree.Clear();
-            (await UnitOfWork.Categories.GetCategoriesByParentId(categoryId)).ForEach(x => Tree.Add(x));
-            (await UnitOfWork.Recipes.GetRecipesByCategoryId(categoryId)).ForEach(x => Tree.Add(x));
+            (await UnitOfWork.Categories.GetCategoriesByParentIdAsync(categoryId)).ForEach(x => Tree.Add(x));
+            (await UnitOfWork.Recipes.GetRecipesByCategoryIdAsync(categoryId)).ForEach(x => Tree.Add(x));
             Root = await UnitOfWork.Categories.GetAsync(categoryId);
             Current = Tree.FirstOrDefault();
             _treeIndex = 0;

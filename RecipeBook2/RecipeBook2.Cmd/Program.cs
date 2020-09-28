@@ -73,7 +73,7 @@ namespace RecipeBook
                                 while (true)
                                 {
                                     var res = EnterIngredient();
-                                    rc.AddIngredient(recipe, res.Ingredient, res.Amount);
+                                    await rc.AddIngredientAsync(recipe, res.Ingredient, res.Amount);
                                     OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
                                     if (Console.ReadKey().Key != ConsoleKey.Enter)
                                         break;
@@ -81,7 +81,7 @@ namespace RecipeBook
                                 while (true)
                                 {
                                     var res = EnterStep();
-                                    rc.AddDirection(recipe, res);
+                                    await rc.AddDirectionAsync(recipe, res);
                                     OutputLine("Enter to continue adding, Backspace to exit", ConsoleColor.Cyan);
                                     if (Console.ReadKey().Key != ConsoleKey.Enter)
                                         break;
@@ -115,7 +115,7 @@ namespace RecipeBook
                             {
                                 if (EnterDeleteConfirmation().Equals("y"))
                                 {
-                                    cc.RemoveCategory(nc.Current.Id);
+                                    await cc.RemoveCategoryAsync(nc.Current.Id);
                                     await nc.ReloadDataAsync(nc.Root?.Id);
                                 }
                                 PrintTree(nc);

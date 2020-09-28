@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.Cmd", "RecipeBook2.Cmd\RecipeBook2.Cmd.csproj", "{DC13140E-60B1-4D9A-AAB8-8C0E5C38DFF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook2.Core", "RecipeBook2.Core\RecipeBook2.Core.csproj", "{529FD0A9-C5F5-4698-A75F-6781D87B4CC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.Core", "RecipeBook2.Core\RecipeBook2.Core.csproj", "{529FD0A9-C5F5-4698-A75F-6781D87B4CC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook2.Infrastructure", "RecipeBook2.Infrastructure\RecipeBook2.Infrastructure.csproj", "{DE0F9574-1EA0-4BA2-A459-C63F84CC43FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.Infrastructure", "RecipeBook2.Infrastructure\RecipeBook2.Infrastructure.csproj", "{DE0F9574-1EA0-4BA2-A459-C63F84CC43FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook2.SharedKernel", "RecipeBook2.SharedKernel\RecipeBook2.SharedKernel.csproj", "{50A0D028-FD80-4D54-976D-5308919D5B33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.SharedKernel", "RecipeBook2.SharedKernel\RecipeBook2.SharedKernel.csproj", "{50A0D028-FD80-4D54-976D-5308919D5B33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

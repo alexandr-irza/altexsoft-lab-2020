@@ -33,6 +33,8 @@
     <Compile Remove="Migrations\20200921203942_12.Designer.cs" />
     <Compile Remove="Migrations\20200922200715_2.cs" />
     <Compile Remove="Migrations\20200922200715_2.Designer.cs" />
+    <Compile Remove="Migrations\20200928192110_Fluent API.cs" />
+    <Compile Remove="Migrations\20200928192110_Fluent API.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

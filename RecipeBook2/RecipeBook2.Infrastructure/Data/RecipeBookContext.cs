@@ -25,7 +25,11 @@ namespace RecipeBook2.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new CategoryConfig());
+            modelBuilder.ApplyConfiguration(new RecipeConfig());
+            modelBuilder.ApplyConfiguration(new IngredientConfig());
             modelBuilder.ApplyConfiguration(new RecipeIngredientConfig());
+            modelBuilder.ApplyConfiguration(new RecipeStepConfig());
         }
     }
 }
