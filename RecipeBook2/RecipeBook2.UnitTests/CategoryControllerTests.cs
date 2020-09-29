@@ -64,12 +64,13 @@ namespace RecipeBook2.UnitTests
             _categories.Clear();
             _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
             _categories.Add(new Category { Id = 2, Name = "Sub Category 1", ParentId = 1 });
+            _categories.Add(new Category { Id = 3, Name = "Category 2", ParentId = null });
 
             var controller = new CategoryController(_unitOfWorkMock.Object);
 
             await controller.RemoveCategoryAsync(1);
 
-            Assert.Empty(_categories);
+            Assert.Single(_categories);
 
             await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveCategoryAsync(1));
             Assert.Single(_categories);
