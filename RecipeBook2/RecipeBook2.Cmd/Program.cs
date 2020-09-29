@@ -128,6 +128,9 @@ namespace RecipeBook
                 catch (Exception ex)
                 {
                     logger.LogError($"{ ex.Message }, { ex.InnerException?.Message }");
+                    OutputLine("Press any key to continue", ConsoleColor.Cyan);
+                    Console.ReadKey();
+                    PrintTree(nc);
                 }
             }
         }

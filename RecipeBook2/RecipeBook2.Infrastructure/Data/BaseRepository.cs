@@ -27,9 +27,9 @@ namespace RecipeBook2.Infrastructure.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>().Where(predicate).ToListAsync();
+            return _context.Set<T>().Where(predicate).ToListAsync();
         }
 
         public Task<List<T>> GetAllAsync() 
@@ -37,9 +37,9 @@ namespace RecipeBook2.Infrastructure.Data
             return _context.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetAsync(int? id)
+        public Task<T> GetAsync(int? id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return _context.Set<T>().FindAsync(id).AsTask();
         }
 
         public void Remove(T item)
@@ -53,9 +53,9 @@ namespace RecipeBook2.Infrastructure.Data
             return _context.SaveChangesAsync();
         }
 
-        public async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        public Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>().SingleOrDefaultAsync(predicate);
+            return _context.Set<T>().SingleOrDefaultAsync(predicate);
         }
 
         public void Update(T item)
@@ -63,10 +63,10 @@ namespace RecipeBook2.Infrastructure.Data
             _context.Set<T>().Update(item);
         }
 
-        public async Task UpdateAsync(T item)
+        public Task UpdateAsync(T item)
         {
             _context.Set<T>().Update(item);
-            await _context.SaveChangesAsync();
+            return _context.SaveChangesAsync();
         }
 
     }

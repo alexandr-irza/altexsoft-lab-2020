@@ -29,6 +29,8 @@ namespace RecipeBook2.Core.Controllers
         {
             if (recipe == null)
                 throw new ArgumentNullException();
+            if (string.IsNullOrWhiteSpace(recipe.Name))
+                throw new Exception($"Recipe name cannot be empty");
             var item = await UnitOfWork.Recipes.SingleOrDefaultAsync(x => x.Name == recipe.Name);
             if (item != null)
                 throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
