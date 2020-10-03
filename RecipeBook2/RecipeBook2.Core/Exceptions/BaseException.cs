@@ -6,12 +6,14 @@ namespace RecipeBook2.Core.Exceptions
     {
         public BaseException()
         {
-
         }
 
         public BaseException(string message) : base(message)
         {
+        }
 
+        public BaseException(string message, Exception inner) : base(message, inner)
+        {
         }
     }
 }

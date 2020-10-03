@@ -1,11 +1,17 @@
-﻿namespace RecipeBook2.Core.Exceptions
+﻿using System;
+
+namespace RecipeBook2.Core.Exceptions
 {
     public class EntityAlreadyExistsException : BaseException
     {
-        public EntityAlreadyExistsException(string name, object key)
-            : base($"Entity { name } ({ key }) already exists.)")
+        public EntityAlreadyExistsException()
         {
-
+        }
+        public EntityAlreadyExistsException(string message) : base(message)
+        {
+        }
+        public EntityAlreadyExistsException(string message, Exception inner) : base(message, inner)
+        {
         }
     }
 }

@@ -31,10 +31,10 @@ namespace RecipeBook2.Core.Controllers
             if (recipe == null)
                 throw new ArgumentNullException();
             if (string.IsNullOrWhiteSpace(recipe.Name))
-                throw new EmptyFieldException(nameof(Recipe), nameof(recipe.Name));
+                throw new EmptyFieldException($"{ nameof(Recipe) } field { nameof(recipe.Name) } cannot be empty.");
             var item = await UnitOfWork.Recipes.SingleOrDefaultAsync(x => x.Name == recipe.Name);
             if (item != null)
-                throw new EntityAlreadyExistsException(nameof(Recipe), item.Name);
+                throw new EntityAlreadyExistsException($"{ nameof(Recipe) } field { item.Name } already exists.");
 
             UnitOfWork.Recipes.Add(recipe);
             await UnitOfWork.SaveChangesAsync();
@@ -49,7 +49,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Recipes.GetAsync(recipeId);
             if (item == null)
-                throw new NotFoundException(nameof(Recipe), recipeId);
+                throw new NotFoundException($"{ nameof(Recipe) } ({ recipeId }) not found.");
 
             UnitOfWork.Recipes.Remove(item);
             await UnitOfWork.SaveChangesAsync();
@@ -59,8 +59,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Recipes.GetAsync(recipe.Id);
             if (item == null)
-                throw new NotFoundException(nameof(Recipe), recipe.Id);
-
+                throw new NotFoundException($"{ nameof(Recipe) } ({ recipe.Id }) not found.");
             UnitOfWork.Recipes.Update(item);
             await UnitOfWork.SaveChangesAsync();
         }

@@ -27,10 +27,10 @@ namespace RecipeBook2.Core.Controllers
             if (category == null)
                 throw new ArgumentNullException();
             if (string.IsNullOrWhiteSpace(category.Name))
-                throw new EmptyFieldException(nameof(Category), nameof(category.Name));
+                throw new EmptyFieldException($"{ nameof(Category) } field { nameof(category.Name) } cannot be empty.");
             var item = await UnitOfWork.Categories.SingleOrDefaultAsync(x => x.Name == category.Name && x.ParentId == category.ParentId);
             if (item != null)
-                throw new EntityAlreadyExistsException(nameof(Category), item.Name);
+                throw new EntityAlreadyExistsException($"{ nameof(Category) } field { item.Name } already exists.");
             if (category.Parent == null)
                 category.Parent = await UnitOfWork.Categories.GetAsync(category.ParentId);
             UnitOfWork.Categories.Add(category);
@@ -47,7 +47,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Categories.GetAsync(categoryId);
             if (item == null)
-                throw new NotFoundException(nameof(Category), categoryId);
+                throw new NotFoundException($"{ nameof(Category) } ({ categoryId }) not found.");
 
             UnitOfWork.Categories.Remove(item);
             await UnitOfWork.SaveChangesAsync();
@@ -56,7 +56,7 @@ namespace RecipeBook2.Core.Controllers
         public async Task UpdateCategoryAsync(Category category)
         {
             _ = await UnitOfWork.Categories.GetAsync(category.Id) ??
-                throw new NotFoundException(nameof(Category), category.Id);
+                throw new NotFoundException($"{ nameof(Category) } ({ category.Id }) not found.");
             UnitOfWork.Categories.Update(category);
             await UnitOfWork.SaveChangesAsync();
         }
