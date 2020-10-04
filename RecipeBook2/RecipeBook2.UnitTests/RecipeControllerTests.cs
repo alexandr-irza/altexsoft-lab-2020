@@ -39,7 +39,7 @@ namespace RecipeBook2.UnitTests
                 .Returns(_repositoryMock.Object);
         }
         [Fact(DisplayName = "Create recipe")]
-        public async Task CreateRecipe_Should()
+        public async Task CreateRecipe_Should_Be_Created_New_Recipe()
         {
             // Arrange
             _recipes.Add(new Recipe { Id = 1, Name = "Recipe 1", CategoryId = null });
@@ -55,45 +55,37 @@ namespace RecipeBook2.UnitTests
             Assert.Equal(3, _recipes.Count);
         }
 
-        [Fact]
-        public void CreateRecipeNull_Should_Throw()
+        [Fact(DisplayName ="Create recipe, should throw when null")]
+        public void CreateRecipe_Should_Throw_When_RecipeNull()
         {
             // Arrange
             Recipe newRecipe = null;
             var controller = new RecipeController(_unitOfWorkMock.Object);
 
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<ArgumentNullException>(async () => newRecipe = await controller.CreateRecipeAsync(null));
-
-            // Assert
             Assert.Null(newRecipe);
         }
         [Fact(DisplayName = "Create duplicate recipe, should throw EntityAlreadyExistsException")]
-        public void CreateRecipDuplicate_Should_Throw()
+        public void CreateRecip_Should_Throw_When_RecipeExists()
         {
             // Arrange
             Recipe newRecipe = null;
             _recipes.Add(new Recipe { Id = 1, Name = "Recipe 1", CategoryId = null });
             var controller = new RecipeController(_unitOfWorkMock.Object);
-            
-            // Act
-            Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => newRecipe = await controller.CreateRecipeAsync(new Recipe { Name = "Recipe 2" }));
 
-            // Assert
+            // Act & Assert
+            Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => newRecipe = await controller.CreateRecipeAsync(new Recipe { Name = "Recipe 2" }));
         }
         [Fact(DisplayName = "Create recipe with empty name, should throw EmptyFieldException")]
-        public void CreateRecipeEmptyName_Should__Throw()
+        public void CreateRecipe_Should_Throw_When_RecipeNameEmpty()
         {
-            // Arrange
-
-            // Act
+            // Act & Assert
             var controller = new RecipeController(_unitOfWorkMock.Object);
             Assert.ThrowsAsync<EmptyFieldException>(async () => _ = await controller.CreateRecipeAsync(new Recipe { }));
-
-            // Assert
         }
-        [Fact(DisplayName = "Remove recipe")]
-        public async Task RemoveRecipe_Should_Throw()
+        [Fact(DisplayName = "Remove recipe, throw exception")]
+        public async Task RemoveRecipe_Should_Throw_When_RecipeDoesNotExist()
         {
             // Arrange
             _repositoryMock.Setup(x => x.Remove(It.IsAny<Recipe>()))
@@ -103,17 +95,28 @@ namespace RecipeBook2.UnitTests
                 });
 
             _recipes.Add(new Recipe { Id = 1, Name = "Recipe 1", CategoryId = null });
-            _recipes.Add(new Recipe { Id = 2, Name = "Recipe 2", CategoryId = null });
 
             var controller = new RecipeController(_unitOfWorkMock.Object);
-            // Act 
+            // Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveRecipeAsync(2));
+            Assert.Single(_recipes);
+        }
+        [Fact(DisplayName = "Remove recipe, success")]
+        public async Task RemoveRecipe_Should_Be_Removed()
+        {
+            // Arrange
+            _repositoryMock.Setup(x => x.Remove(It.IsAny<Recipe>()))
+                .Callback<Recipe>(x =>
+                {
+                    _recipes.Remove(x);
+                });
+
+            _recipes.Add(new Recipe { Id = 1, Name = "Recipe 1", CategoryId = null });
+
+            var controller = new RecipeController(_unitOfWorkMock.Object);
+            // Act & Assert
             await controller.RemoveRecipeAsync(1);
-
-            // Assert
-            Assert.Single(_recipes);
-
-            await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveRecipeAsync(1));
-            Assert.Single(_recipes);
+            Assert.Empty(_recipes);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace RecipeBook2.UnitTests
         }
 
         [Fact(DisplayName = "Create Category")]
-        public async Task CreateCategory_Should()
+        public async Task CreateCategory_Should_Create_New_Category()
         {
             // Arrange
             _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
@@ -54,13 +54,11 @@ namespace RecipeBook2.UnitTests
             Assert.Equal(3, _categories.Count);
         }
 
-        [Fact(DisplayName = "Remove category")]
-        public async Task RemoveCategory_Should_Throw()
+        [Fact(DisplayName = "Remove category, throw exception")]
+        public async Task RemoveCategory_Should_Throw_When_CategoryDoesNotExist()
         {
             // Arrange
             _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
-            _categories.Add(new Category { Id = 2, Name = "Sub Category 1", ParentId = 1 });
-            _categories.Add(new Category { Id = 3, Name = "Category 2", ParentId = null });
             _repositoryMock.Setup(x => x.Remove(It.IsAny<Category>()))
                 .Callback<Category>(x =>
                 {
@@ -68,46 +66,54 @@ namespace RecipeBook2.UnitTests
                 });
             var controller = new CategoryController(_unitOfWorkMock.Object);
 
-            // Act
-            await controller.RemoveCategoryAsync(1);
-
-            Assert.Single(_categories);
-
-            await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveCategoryAsync(1));
-            // Assert
+            // Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveCategoryAsync(2));
             Assert.Single(_categories);
         }
+        [Fact(DisplayName = "Remove category, success")]
+        public async Task RemoveCategory_Should_Be_Removed()
+        {
+            // Arrange
+            _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
+            _categories.Add(new Category { Id = 2, Name = "Sub Category 1", ParentId = 1 });
+            _repositoryMock.Setup(x => x.Remove(It.IsAny<Category>()))
+                .Callback<Category>(x =>
+                {
+                    _categories.RemoveAll(c => c.Id == x.Id || c.ParentId == x.Id);
+                });
+            var controller = new CategoryController(_unitOfWorkMock.Object);
 
-        [Fact]
-        public void CreateCategoryNull_Should_Throw()
+            // Act & Assert
+            await controller.RemoveCategoryAsync(1);
+            Assert.Empty(_categories);
+        }
+        [Fact(DisplayName = "Create category, should throw when null")]
+        public void CreateCategory_Should_Throw_When_CategoryNull()
         {
             // Arrange
             Category newCategory = null;
             var controller = new CategoryController(_unitOfWorkMock.Object);
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<ArgumentNullException>(async () => newCategory = await controller.CreateCategoryAsync(null));
-            // Assert
             Assert.Null(newCategory);
         }
         [Fact(DisplayName = "Create duplicate category, should throw EntityAlreadyExistsException")]
-        public void CreateCategoryDuplicate_Should_Throw()
+        public void CreateCategory_Should_Throw_When_CategoryExists()
         {
             // Arrange
             Category newCategory = null;
             _categories.Add(new Category { Id = 1, Name = "Category 1" });
             var controller = new CategoryController(_unitOfWorkMock.Object);
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => newCategory = await controller.CreateCategoryAsync(new Category { Name = "Category 1" }));
-            // Assert
         }
         [Fact(DisplayName = "Create category with empty name, should throw EmptyFieldException")]
-        public void CreateCategoryEmptyName_Should_Throw()
+        public void CreateCategory_Should_Throw_When_CategoryNameEmpty()
         {
             // Arrange
             var controller = new CategoryController(_unitOfWorkMock.Object);
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<EmptyFieldException>(async () => _ = await controller.CreateCategoryAsync(new Category {  }));
-            // Assert
         }
     }
 }
