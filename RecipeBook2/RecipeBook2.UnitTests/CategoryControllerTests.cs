@@ -4,8 +4,6 @@ using RecipeBook2.Core.Entities;
 using RecipeBook2.Core.Interfaces;
 using RecipeBook2.Core.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,107 +11,120 @@ namespace RecipeBook2.UnitTests
 {
     public class CategoryControllerTests
     {
-        private List<Category> _categories;
-        private Mock<ICategoryRepository> _repositoryMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
+        private CategoryController _controller;
 
         public CategoryControllerTests()
         {
-            _categories = new List<Category>();
-            _repositoryMock = new Mock<ICategoryRepository>();
-            _repositoryMock.Setup(x => x.GetAllAsync())
-                .ReturnsAsync(_categories);
-            _repositoryMock.Setup(x => x.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync((int x) => _categories.SingleOrDefault(r => r.Id == x));
-
-            _repositoryMock.Setup(x => x.Add(It.IsAny<Category>()))
-                .Callback<Category>(x =>
-                {
-                    x.Id = _categories.Max(o => o.Id) + 1;
-                    _categories.Add(x);
-                });
-
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _unitOfWorkMock.Setup(x => x.Categories)
-                .Returns(_repositoryMock.Object);
+            _controller = new CategoryController(_unitOfWorkMock.Object);
         }
 
         [Fact(DisplayName = "Create Category")]
         public async Task CreateCategory_Should_Create_New_Category()
         {
             // Arrange
-            _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
-            _categories.Add(new Category { Id = 2, Name = "Sub Category 1", ParentId = 1 });
+            var categoryToAdd = new Category { Name = "Category 1", ParentId = null };
 
-            var controller = new CategoryController(_unitOfWorkMock.Object);
+            var repositoryMock = new Mock<ICategoryRepository>();
+            repositoryMock.Setup(r => r.SingleOrDefaultAsync(x => x.Name == categoryToAdd.Name && x.ParentId == categoryToAdd.ParentId)).ReturnsAsync((Category)null);
+            repositoryMock.Setup(r => r.Add(categoryToAdd));
+
+            _unitOfWorkMock.SetupGet(uow => uow.Categories).Returns(repositoryMock.Object);
+            _unitOfWorkMock.Setup(uow => uow.SaveChangesAsync());
 
             // Act
-            var newCategory = await controller.CreateCategoryAsync(new Category { Name = "Category 2", ParentId = null });
+            var result = await _controller.CreateCategoryAsync(categoryToAdd);
+
             // Assert
-            Assert.Equal(3, newCategory.Id);
-            Assert.Equal(3, _categories.Count);
-        }
+            Assert.Equal(result, categoryToAdd);
 
-        [Fact(DisplayName = "Remove category, throw exception")]
-        public async Task RemoveCategory_Should_Throw_When_CategoryDoesNotExist()
-        {
-            // Arrange
-            _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
-            _repositoryMock.Setup(x => x.Remove(It.IsAny<Category>()))
-                .Callback<Category>(x =>
-                {
-                    _categories.RemoveAll(c => c.Id == x.Id || c.ParentId == x.Id);
-                });
-            var controller = new CategoryController(_unitOfWorkMock.Object);
-
-            // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(async () => await controller.RemoveCategoryAsync(2));
-            Assert.Single(_categories);
-        }
-        [Fact(DisplayName = "Remove category, success")]
-        public async Task RemoveCategory_Should_Be_Removed()
-        {
-            // Arrange
-            _categories.Add(new Category { Id = 1, Name = "Category 1", ParentId = null });
-            _categories.Add(new Category { Id = 2, Name = "Sub Category 1", ParentId = 1 });
-            _repositoryMock.Setup(x => x.Remove(It.IsAny<Category>()))
-                .Callback<Category>(x =>
-                {
-                    _categories.RemoveAll(c => c.Id == x.Id || c.ParentId == x.Id);
-                });
-            var controller = new CategoryController(_unitOfWorkMock.Object);
-
-            // Act & Assert
-            await controller.RemoveCategoryAsync(1);
-            Assert.Empty(_categories);
+            repositoryMock.Verify(r => r.SingleOrDefaultAsync(x => x.Name == categoryToAdd.Name && x.ParentId == categoryToAdd.ParentId), Times.Once);
+            repositoryMock.Verify(r => r.Add(categoryToAdd), Times.Once);
+            _unitOfWorkMock.VerifyGet(uow => uow.Categories, Times.AtLeastOnce);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Once);
         }
         [Fact(DisplayName = "Create category, should throw when null")]
         public void CreateCategory_Should_Throw_When_CategoryNull()
         {
             // Arrange
-            Category newCategory = null;
-            var controller = new CategoryController(_unitOfWorkMock.Object);
+            Category categoryToAdd = null;
+            _unitOfWorkMock.Setup(uow => uow.SaveChangesAsync());
+
             // Act & Assert
-            Assert.ThrowsAsync<ArgumentNullException>(async () => newCategory = await controller.CreateCategoryAsync(null));
-            Assert.Null(newCategory);
+            var result = Assert.ThrowsAsync<ArgumentNullException>(async () => categoryToAdd = await _controller.CreateCategoryAsync(null));
+            Assert.Null(categoryToAdd);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Never);
         }
         [Fact(DisplayName = "Create duplicate category, should throw EntityAlreadyExistsException")]
-        public void CreateCategory_Should_Throw_When_CategoryExists()
+        public async Task CreateCategory_Should_Throw_When_CategoryExists()
         {
             // Arrange
-            Category newCategory = null;
-            _categories.Add(new Category { Id = 1, Name = "Category 1" });
-            var controller = new CategoryController(_unitOfWorkMock.Object);
+            var categoryToAdd = new Category { Name = "Category 1", ParentId = null };
+            var repositoryMock = new Mock<ICategoryRepository>();
+            repositoryMock.Setup(r => r.SingleOrDefaultAsync(x => x.Name == categoryToAdd.Name && x.ParentId == categoryToAdd.ParentId)).ReturnsAsync(categoryToAdd);
+
+            _unitOfWorkMock.SetupGet(uow => uow.Categories).Returns(repositoryMock.Object);
+
             // Act & Assert
-            Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => newCategory = await controller.CreateCategoryAsync(new Category { Name = "Category 1" }));
+            var exception = await Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => _ = await _controller.CreateCategoryAsync(categoryToAdd));
+            Assert.EndsWith("already exists.", exception.Message);
+            repositoryMock.Verify(r => r.SingleOrDefaultAsync(x => x.Name == categoryToAdd.Name && x.ParentId == categoryToAdd.ParentId), Times.Once);
+            _unitOfWorkMock.VerifyGet(uow => uow.Categories, Times.AtLeastOnce);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Never);
         }
         [Fact(DisplayName = "Create category with empty name, should throw EmptyFieldException")]
-        public void CreateCategory_Should_Throw_When_CategoryNameEmpty()
+        public async Task CreateCategory_Should_Throw_When_CategoryNameEmpty()
         {
             // Arrange
-            var controller = new CategoryController(_unitOfWorkMock.Object);
+            _unitOfWorkMock.Setup(uow => uow.SaveChangesAsync());
             // Act & Assert
-            Assert.ThrowsAsync<EmptyFieldException>(async () => _ = await controller.CreateCategoryAsync(new Category {  }));
+            var exception = await Assert.ThrowsAsync<EmptyFieldException>(async () => _ = await _controller.CreateCategoryAsync(new Category { }));
+            Assert.EndsWith("cannot be empty.", exception.Message);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Never);
         }
+        [Fact(DisplayName = "Remove category, throw exception")]
+        public async Task RemoveCategory_Should_Throw_When_CategoryDoesNotExist()
+        {
+            // Arrange
+            var idToRemove = 2;
+            var categoryToRemove = new Category { Id = 1, Name = "Category 1", ParentId = null };
+
+            var repositoryMock = new Mock<ICategoryRepository>();
+            repositoryMock.Setup(r => r.Remove(categoryToRemove));
+            repositoryMock.Setup(r => r.GetAsync(categoryToRemove.Id)).ReturnsAsync(categoryToRemove);
+
+            _unitOfWorkMock.SetupGet(uow => uow.Categories).Returns(repositoryMock.Object);
+            _unitOfWorkMock.Setup(uow => uow.SaveChangesAsync());
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<NotFoundException>(async () => await _controller.RemoveCategoryAsync(idToRemove));
+            Assert.EndsWith("not found.", exception.Message);
+            repositoryMock.Verify(r => r.GetAsync(idToRemove), Times.Once);
+            _unitOfWorkMock.VerifyGet(uow => uow.Categories, Times.AtLeastOnce);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Never);
+        }
+        [Fact(DisplayName = "Remove category, success")]
+        public async Task RemoveCategory_Should_Be_Removed()
+        {
+            // Arrange
+            var idToRemove = 1;
+            var categoryToRemove = new Category { Id = 1, Name = "Category 1", ParentId = null };
+
+            var repositoryMock = new Mock<ICategoryRepository>();
+            repositoryMock.Setup(r => r.Remove(categoryToRemove));
+            repositoryMock.Setup(r => r.GetAsync(categoryToRemove.Id)).ReturnsAsync(categoryToRemove);
+
+            _unitOfWorkMock.SetupGet(uow => uow.Categories).Returns(repositoryMock.Object);
+            _unitOfWorkMock.Setup(uow => uow.SaveChangesAsync());
+
+            // Act & Assert
+            await _controller.RemoveCategoryAsync(idToRemove);
+            repositoryMock.Verify(r => r.Remove(categoryToRemove), Times.Once);
+            repositoryMock.Verify(r => r.GetAsync(idToRemove), Times.Once);
+            _unitOfWorkMock.VerifyGet(uow => uow.Categories, Times.AtLeastOnce);
+            _unitOfWorkMock.Verify(uow => uow.SaveChangesAsync(), Times.Once);
+        }
+
     }
 }
