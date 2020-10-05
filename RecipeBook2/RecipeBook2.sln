@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.SharedKernel", "RecipeBook2.SharedKernel\RecipeBook2.SharedKernel.csproj", "{50A0D028-FD80-4D54-976D-5308919D5B33}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook2.UnitTests", "RecipeBook2.UnitTests\RecipeBook2.UnitTests.csproj", "{300A3DD3-92F6-4560-84AE-4B0E2B24C619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{50A0D028-FD80-4D54-976D-5308919D5B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50A0D028-FD80-4D54-976D-5308919D5B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50A0D028-FD80-4D54-976D-5308919D5B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{300A3DD3-92F6-4560-84AE-4B0E2B24C619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{300A3DD3-92F6-4560-84AE-4B0E2B24C619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{300A3DD3-92F6-4560-84AE-4B0E2B24C619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{300A3DD3-92F6-4560-84AE-4B0E2B24C619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

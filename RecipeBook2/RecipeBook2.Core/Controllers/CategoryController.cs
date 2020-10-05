@@ -3,6 +3,7 @@ using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RecipeBook2.Core.Exceptions;
 
 namespace RecipeBook2.Core.Controllers
 {
@@ -26,10 +27,10 @@ namespace RecipeBook2.Core.Controllers
             if (category == null)
                 throw new ArgumentNullException();
             if (string.IsNullOrWhiteSpace(category.Name))
-                throw new Exception($"Category name cannot be empty");
+                throw new EmptyFieldException($"{ nameof(Category) } field { nameof(category.Name) } cannot be empty.");
             var item = await UnitOfWork.Categories.SingleOrDefaultAsync(x => x.Name == category.Name && x.ParentId == category.ParentId);
             if (item != null)
-                throw new Exception($"Category {category.Name} already exists");
+                throw new EntityAlreadyExistsException($"{ nameof(Category) } field { item.Name } already exists.");
             if (category.Parent == null)
                 category.Parent = await UnitOfWork.Categories.GetAsync(category.ParentId);
             UnitOfWork.Categories.Add(category);
@@ -46,7 +47,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Categories.GetAsync(categoryId);
             if (item == null)
-                throw new Exception($"Category {categoryId} has not been found");
+                throw new NotFoundException($"{ nameof(Category) } ({ categoryId }) not found.");
 
             UnitOfWork.Categories.Remove(item);
             await UnitOfWork.SaveChangesAsync();
@@ -54,9 +55,8 @@ namespace RecipeBook2.Core.Controllers
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            var item = await UnitOfWork.Categories.GetAsync(category.Id);
-            if (item == null)
-                throw new Exception($"Category {category.Id} has not been found");
+            _ = await UnitOfWork.Categories.GetAsync(category.Id) ??
+                throw new NotFoundException($"{ nameof(Category) } ({ category.Id }) not found.");
             UnitOfWork.Categories.Update(category);
             await UnitOfWork.SaveChangesAsync();
         }

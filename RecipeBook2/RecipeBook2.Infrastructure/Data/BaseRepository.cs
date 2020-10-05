@@ -13,7 +13,7 @@ namespace RecipeBook2.Infrastructure.Data
         private RecipeBookContext _context;
         public BaseRepository(RecipeBookContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public void Add(T item)
