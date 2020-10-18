@@ -17,9 +17,13 @@ namespace RecipeBook2.Core.Controllers
             var recipe = await UnitOfWork.Recipes.GetAsync(id);
             if (recipe == null)
                 throw new EntryPointNotFoundException();
-
             return recipe;
         }
+        public async Task<List<Recipe>> GetAllRecipesAsync()
+        {
+            return await UnitOfWork.Recipes.GetAllAsync();
+        }
+
         public async Task<List<Recipe>> GetRecipesAsync(int? categoryId = null)
         {
             return await UnitOfWork.Recipes.GetRecipesByCategoryIdAsync(categoryId);
@@ -60,7 +64,8 @@ namespace RecipeBook2.Core.Controllers
             if (item == null)
                 throw new Exception($"Recipe {recipe.Id} has not been found");
 
-            UnitOfWork.Recipes.Update(item);
+            item.Name = recipe.Name;
+            item.Description = recipe.Description;
             await UnitOfWork.SaveChangesAsync();
         }
 

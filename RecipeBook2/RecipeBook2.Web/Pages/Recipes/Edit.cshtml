@@ -1,0 +1,107 @@
+﻿@page
+@model RecipeBook2.Web.Pages.Recipes.EditModel
+
+<h2 class="text-info">Edit Recipe</h2>
+<div class="border container" style="padding:30px">
+    <form method="post">
+        <input type="hidden" asp-for="Recipe.Id" />
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Recipe.Name"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Recipe.Name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Recipe.Description"></label>
+            </div>
+            <div class="col-3">
+                <textarea asp-for="Recipe.Description" Description="form-control" type="text" text-wrap="normal"></textarea>
+            </div>
+        </div>
+        <div class="container row p-0 m-0">
+            <div class="col-9">
+                <label>Ingredients:</label>
+            </div>
+            <div class="col-3 pb-1">
+                <a class="btn btn-info form-control text-white">Add Ingredient</a>
+            </div>
+        </div>
+        <table class="table table-striped border">
+            <tr class="table-secondary">
+                <td>Name</td>
+                <td>Amount</td>
+                <td></td>
+            </tr>
+            @for (var i = 0; i < Model.Recipe.Ingredients.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        <input hidden asp-for="Recipe.Ingredients[i].IngredientId" class="form-control" />
+                        <input hidden asp-for="Recipe.Ingredients[i].RecipeId" class="form-control" />
+                        <input hidden asp-for="Recipe.Ingredients[i].Ingredient.Id" class="form-control" />
+                        <input hidden asp-for="Recipe.Ingredients[i].Ingredient.Name" class="form-control" />
+                        <label asp-for="Recipe.Ingredients[i].Ingredient.Name" class="form-control">@Model.Recipe.Ingredients[i].Ingredient.Name</label>
+                    </td>
+                    <td>
+                        <input hidden asp-for="Recipe.Ingredients[i].Amount" class="form-control" />
+                        <label asp-for="Recipe.Ingredients[i].Amount" class="form-control">@Model.Recipe.Ingredients[i].Amount</label>
+                    </td>
+                    <td>
+                        <button asp-page-handler="DeleteIngredient" asp-route-ingredientId="@Model.Recipe.Ingredients[i].IngredientId" onclick="return confirm('Are you sure you want to delete ingredient?')" class="btn btn-danger btn-sm" disabled>Delete</button>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="container row p-0 m-0">
+            <div class="col-9">
+                <label>Directions:</label>
+            </div>
+            <div class="col-3 pb-1">
+                <a class="btn btn-info form-control text-white">Add Direction</a>
+            </div>
+        </div>
+        <table class="table table-striped border">
+            <tr class="table-secondary">
+                <td>Number</td>
+                <td>Description</td>
+                <td></td>
+            </tr>
+            @for (var i = 0; i < Model.Recipe.Directions.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        <input hidden asp-for="Recipe.Directions[i].Id" class="form-control" />
+                        <input hidden asp-for="Recipe.Directions[i].RecipeId" class="form-control" />
+                        <input hidden asp-for="Recipe.Directions[i].StepNumber" class="form-control" />
+                        <label asp-for="Recipe.Directions[i].StepNumber" class="form-control">@Model.Recipe.Directions[i].StepNumber</label>
+                    </td>
+                    <td>
+                        <input hidden asp-for="Recipe.Directions[i].StepInstruction" class="form-control" />
+                        <label asp-for="Recipe.Directions[i].StepInstruction" class="form-control">@Model.Recipe.Directions[i].StepInstruction</label>
+                    </td>
+                    <td>
+                        <button asp-page-handler="DeleteDirection" asp-route-stepId="@Model.Recipe.Directions[i].Id" onclick="return confirm('Are you sure you want to delete step?')" class="btn btn-danger btn-sm" disabled>Delete</button>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="form-group row">
+            <div class="col-3 offset-4">
+                <input type="submit" value="Update" class="btn btn-primary form-control" disabled />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -17,7 +17,7 @@ namespace RecipeBook2.Core.Controllers
             return await UnitOfWork.Categories.GetAsync(id);
         }
 
-        public async Task<List<Category>> GetCategoriesAsync(int parentId)
+        public async Task<List<Category>> GetCategoriesAsync(int? parentId)
         {
             return await UnitOfWork.Categories.GetCategoriesByParentIdAsync(parentId);
         }
@@ -57,7 +57,7 @@ namespace RecipeBook2.Core.Controllers
             var item = await UnitOfWork.Categories.GetAsync(category.Id);
             if (item == null)
                 throw new Exception($"Category {category.Id} has not been found");
-            UnitOfWork.Categories.Update(category);
+            item.Name = category.Name;
             await UnitOfWork.SaveChangesAsync();
         }
     }

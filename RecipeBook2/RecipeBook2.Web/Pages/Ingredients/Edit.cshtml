@@ -1,0 +1,30 @@
+﻿@page
+@model RecipeBook2.Web.Pages.Ingredients.EditModel
+
+<h2 class="text-info">Edit Ingredient</h2>
+<div class="border container" style="padding:30px">
+    <form method="post">
+        <input type="hidden" asp-for="Ingredient.Id" />
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Ingredient.Name"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Ingredient.Name" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3 offset-4">
+                <input type="submit" value="Update" class="btn btn-primary form-control" />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
