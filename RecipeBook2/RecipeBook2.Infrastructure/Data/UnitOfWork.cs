@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RecipeBook2.Core.Interfaces;
 
 namespace RecipeBook2.Infrastructure.Data
@@ -16,12 +17,12 @@ namespace RecipeBook2.Infrastructure.Data
             IIngredientRepository ingredientRepository, IRecipeRepository recipeRepository, IRecipeIngredientRepository recipeIngredientRepository,
             IRecipeStepRepository recipeStepRepository)
         {
-            Categories = categoryRepository;
-            Recipes = recipeRepository;
-            Ingredients = ingredientRepository;
-            RecipeIngredients = recipeIngredientRepository;
-            RecipeSteps = recipeStepRepository;
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            Categories = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+            Recipes = recipeRepository ?? throw new ArgumentNullException(nameof(recipeRepository));
+            Ingredients = ingredientRepository ?? throw new ArgumentNullException(nameof(ingredientRepository));
+            RecipeIngredients = recipeIngredientRepository ?? throw new ArgumentNullException(nameof(recipeIngredientRepository));
+            RecipeSteps = recipeStepRepository ?? throw new ArgumentNullException(nameof(recipeStepRepository));
         }
 
         public Task SaveChangesAsync()

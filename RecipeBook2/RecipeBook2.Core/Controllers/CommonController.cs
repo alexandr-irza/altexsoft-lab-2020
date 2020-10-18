@@ -1,4 +1,5 @@
-﻿using RecipeBook2.Core.Interfaces;
+﻿using System;
+using RecipeBook2.Core.Interfaces;
 
 namespace RecipeBook2.Core.Controllers
 {
@@ -7,7 +8,7 @@ namespace RecipeBook2.Core.Controllers
         protected IUnitOfWork UnitOfWork { get; }
         protected CommonController(IUnitOfWork unitOfWork)
         {
-            UnitOfWork = unitOfWork;
+            UnitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork)); ;
         }
     }
 }

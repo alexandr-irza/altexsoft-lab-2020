@@ -1,4 +1,5 @@
 ﻿using RecipeBook2.Core.Entities;
+using RecipeBook2.Core.Exceptions;
 using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -34,10 +35,10 @@ namespace RecipeBook2.Core.Controllers
             if (recipe == null)
                 throw new ArgumentNullException();
             if (string.IsNullOrWhiteSpace(recipe.Name))
-                throw new Exception($"Recipe name cannot be empty");
+                throw new EmptyFieldException($"{ nameof(Recipe) } field { nameof(recipe.Name) } cannot be empty.");
             var item = await UnitOfWork.Recipes.SingleOrDefaultAsync(x => x.Name == recipe.Name);
             if (item != null)
-                throw new Exception($"Recipe {item.Name} ({item.CategoryId}) already exists");
+                throw new EntityAlreadyExistsException($"{ nameof(Recipe) } field { item.Name } already exists.");
 
             UnitOfWork.Recipes.Add(recipe);
             await UnitOfWork.SaveChangesAsync();
@@ -52,7 +53,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Recipes.GetAsync(recipeId);
             if (item == null)
-                throw new Exception($"Recipe {recipeId} has not been found");
+                throw new NotFoundException($"{ nameof(Recipe) } ({ recipeId }) not found.");
 
             UnitOfWork.Recipes.Remove(item);
             await UnitOfWork.SaveChangesAsync();
@@ -62,7 +63,7 @@ namespace RecipeBook2.Core.Controllers
         {
             var item = await UnitOfWork.Recipes.GetAsync(recipe.Id);
             if (item == null)
-                throw new Exception($"Recipe {recipe.Id} has not been found");
+                throw new NotFoundException($"{ nameof(Recipe) } ({ recipe.Id }) not found.");
 
             item.Name = recipe.Name;
             item.Description = recipe.Description;
