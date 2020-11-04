@@ -25,7 +25,7 @@ namespace RecipeBook2.Web.Pages.Categories
             Categories = await categoryController.GetCategoriesAsync(id);
         }
 
-        public async Task<IActionResult> OnPostDelete(int id)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             await categoryController.RemoveCategoryAsync(id);
             return RedirectToPage("Index", new { id = id });

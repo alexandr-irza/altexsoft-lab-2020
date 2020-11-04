@@ -22,7 +22,7 @@ namespace RecipeBook2.Web.Pages.Ingredients
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
         }
-        public async Task<IActionResult> OnPostDelete(int id)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             await ingredientController.RemoveIngredientAsync(id);
             return RedirectToPage("Index");

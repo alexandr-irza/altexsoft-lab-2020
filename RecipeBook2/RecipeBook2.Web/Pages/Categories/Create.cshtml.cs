@@ -26,7 +26,7 @@ namespace RecipeBook2.Web.Pages.Categories
         {
 
         }
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
@@ -34,10 +34,8 @@ namespace RecipeBook2.Web.Pages.Categories
                 await categoryController.CreateCategoryAsync(Category);
                 return RedirectToPage("Index", new { id = ParentId });
             }
-            else
-            {
-                return Page();
-            }
+
+            return Page();
         }
     }
 }

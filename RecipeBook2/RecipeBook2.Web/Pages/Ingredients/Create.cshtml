@@ -1,5 +1,8 @@
 ﻿@page
-@model RecipeBook2.Web.Pages.Ingredients.CreateModel
+@model Ingredients.CreateModel
+@{
+    ViewData["Title"] = "Create Ingredient";
+}
 
 <h2 class="text-info">Create Ingredient</h2>
 <div class="border container" style="padding:30px">
@@ -7,15 +10,15 @@
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Ingredient.Name"></label>
+                @Html.DisplayNameFor(m => m.Ingredient.Name)
             </div>
             <div class="col-6">
-                <input asp-for="Ingredient.Name" class="form-control" />
+                @Html.TextBoxFor(m => m.Ingredient.Name, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group row">
             <div class="col-3 offset-4">
-                <input type="submit" value="Create" class="btn btn-primary form-control" />
+                <button type="submit" class="btn btn-primary form-control">Create</button>
             </div>
             <div class="col-3">
                 <a asp-page="Index" class="btn btn-success form-control">Back to List</a>

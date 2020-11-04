@@ -1,7 +1,7 @@
 ﻿@page "{id = null}"
-@model RecipeBook2.Web.Pages.Categories.IndexModel
+@model Categories.IndexModel
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Categories List";
 }
 
 <div class="container row p-0 m-0">
@@ -18,11 +18,8 @@
             {
                 <table class="table table-striped border">
                     <tr class="table-secondary">
-                        <th>
-                            @Html.DisplayNameFor(m => m.Categories.SingleOrDefault().Name)
-                        </th>
-                        <th>
-
+                        <th colspan="2">
+                            @Html.DisplayNameFor(m => m.Categories.First().Name)
                         </th>
                     </tr>
                     @foreach (var category in Model.Categories)

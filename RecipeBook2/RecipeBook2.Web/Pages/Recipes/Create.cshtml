@@ -1,5 +1,8 @@
 ﻿@page
-@model RecipeBook2.Web.Pages.Recipes.CreateModel
+@model Recipes.CreateModel
+@{
+    ViewData["Title"] = "Create Recipe";
+}
 
 <h2 class="text-info">Create Recipe</h2>
 <div class="border container" style="padding:30px">
@@ -7,24 +10,24 @@
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Recipe.Name"></label>
+                @Html.DisplayNameFor(m => m.Recipe.Name)
             </div>
             <div class="col-6">
-                <input asp-for="Recipe.Name" class="form-control" />
+                @Html.TextBoxFor(m => m.Recipe.Name, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Recipe.Description"></label>
+                @Html.DisplayNameFor(m => m.Recipe.Description)
             </div>
             <div class="col-6">
-                <textarea asp-for="Recipe.Description" Description="form-control" type="text" text-wrap="normal"></textarea>
+                @Html.TextAreaFor(m => m.Recipe.Description, new { @class = "form-control" })
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-3 offset-4">
-                <input type="submit" value="Create" class="btn btn-primary form-control" />
+                <button type="submit" class="btn btn-primary form-control">Create</button>
             </div>
             <div class="col-3">
                 <a asp-page="Index" class="btn btn-success form-control">Back to List</a>

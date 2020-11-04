@@ -31,10 +31,7 @@ namespace RecipeBook2.Web.Pages.Categories
                 await categoryController.UpdateCategoryAsync(Category);
                 return RedirectToPage("Index");
             }
-            else
-            {
-                return Page();
-            }
+            return Page();
         }
     }
 }

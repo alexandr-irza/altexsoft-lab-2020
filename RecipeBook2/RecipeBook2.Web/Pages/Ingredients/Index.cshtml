@@ -1,5 +1,5 @@
 ﻿@page
-@model RecipeBook2.Web.Pages.Ingredients.IndexModel
+@model Ingredients.IndexModel
 @{
     ViewData["Title"] = "Ingredients List";
 }
@@ -17,11 +17,8 @@
             {
                 <table class="table table-striped border">
                     <tr class="table-secondary">
-                        <th>
-                            <label asp-for="Ingredients.FirstOrDefault().Name"></label>
-                        </th>
-                        <th>
-
+                        <th colspan="2">
+                            @Html.DisplayNameFor(m => m.Ingredients.First().Name)
                         </th>
                     </tr>
                     @foreach (var ingredient in Model.Ingredients)

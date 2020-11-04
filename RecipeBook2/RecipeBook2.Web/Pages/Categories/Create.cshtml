@@ -1,5 +1,8 @@
 ﻿@page
-@model RecipeBook2.Web.Pages.Categories.CreateModel
+@model Categories.CreateModel
+@{
+    ViewData["Title"] = "Create Category";
+}
 
 <h2 class="text-info">Create Category</h2>
 <div class="border container" style="padding:30px">
@@ -7,15 +10,15 @@
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Category.Name"></label>
+                @Html.DisplayNameFor(m => m.Category.Name)
             </div>
             <div class="col-6">
-                <input asp-for="Category.Name" class="form-control" />
+                @Html.TextBoxFor(m => m.Category.Name, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group row">
             <div class="col-3 offset-4">
-                <input type="submit" value="Create" class="btn btn-primary form-control" />
+                <button type="submit" class="btn btn-primary form-control">Create</button>
             </div>
             <div class="col-3">
                 <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
@@ -25,5 +28,5 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial"/>
+    <partial name="_ValidationScriptsPartial" />
 }

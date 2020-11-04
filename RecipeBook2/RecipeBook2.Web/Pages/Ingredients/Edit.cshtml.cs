@@ -27,10 +27,7 @@ namespace RecipeBook2.Web.Pages.Ingredients
                 await ingredientController.UpdateIngredientAsync(Ingredient);
                 return RedirectToPage("Index");
             }
-            else
-            {
-                return Page();
-            }
+            return Page();
         }
     }
 }

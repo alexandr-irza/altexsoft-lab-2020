@@ -30,16 +30,13 @@ namespace RecipeBook2.Web.Pages.Recipes
                 await recipeController.UpdateRecipeAsync(Recipe);
                 return RedirectToPage("Index");
             }
-            else
-            {
-                return Page();
-            }
+            
+            return Page();
         }
 
-        public IActionResult OnPostDeleteIngredientAsync(int ingredientId)
+        public IActionResult OnPostDeleteIngredient(int ingredientId)
         {
-            ModelState.Clear();
-            var item = Recipe.Ingredients.SingleOrDefault(x => x.RecipeId == Recipe.Id && x.IngredientId == ingredientId);
+            var item = Recipe.Ingredients.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.IngredientId == ingredientId);
             if (item != null)
             {
                 Recipe.Ingredients.Remove(item);
@@ -47,10 +44,9 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
-        public IActionResult OnPostDeleteDirectionAsync(int stepId)
+        public IActionResult OnPostDeleteDirection(int stepId)
         {
-            ModelState.Clear();
-            var item = Recipe.Directions.SingleOrDefault(x => x.RecipeId == Recipe.Id && x.Id == stepId);
+            var item = Recipe.Directions.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.Id == stepId);
             if (item != null)
             {
                 Recipe.Directions.Remove(item);
@@ -58,5 +54,25 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
+        public IActionResult OnPostAddDirection()
+        {
+            var item = new RecipeStep { RecipeId = Recipe.Id, StepNumber = 1, StepInstruction = "Test"};
+            if (item != null)
+            {
+                Recipe.Directions.Add(item);
+            }
+            return Page();
+        }
+
+        public IActionResult OnPostAddIngredient()
+        {
+            var item = new RecipeIngredient { RecipeId = Recipe.Id, IngredientId = 1, Amount = 10 };
+            item.Ingredient = new Ingredient { Id = 1, Name = "Muka" };
+            if (item != null)
+            {
+                Recipe.Ingredients.Add(item);
+            }
+            return Page();
+        }
     }
 }

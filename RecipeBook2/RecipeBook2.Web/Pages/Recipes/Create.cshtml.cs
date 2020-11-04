@@ -18,17 +18,15 @@ namespace RecipeBook2.Web.Pages.Recipes
         public void OnGet()
         {
         }
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
                 await recipeController.CreateRecipeAsync(Recipe);
                 return RedirectToPage("Index");
             }
-            else
-            {
-                return Page();
-            }
+
+            return Page();
         }
     }
 }
