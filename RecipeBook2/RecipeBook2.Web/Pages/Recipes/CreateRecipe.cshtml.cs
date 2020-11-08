@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeBook2.Core.Controllers;
 using RecipeBook2.Core.Entities;
 
-namespace RecipeBook2.Web.Pages.Ingredients
+namespace RecipeBook2.Web.Pages.Recipes
 {
-    public class CreateModel : PageModel
+    public class CreateRecipeModel : PageModel
     {
-        private readonly IngredientController ingredientController;
+        private readonly RecipeController recipeController;
         [BindProperty]
-        public Ingredient Ingredient { get; set; }
-        public CreateModel(IngredientController ingredientController)
+        public Recipe Recipe { get; set; }
+        public CreateRecipeModel(RecipeController recipeController)
         {
-            this.ingredientController = ingredientController;
+            this.recipeController = recipeController;
         }
         public void OnGet()
         {
@@ -22,7 +22,7 @@ namespace RecipeBook2.Web.Pages.Ingredients
         {
             if (ModelState.IsValid)
             {
-                await ingredientController.CreateIngredientAsync(Ingredient);
+                await recipeController.CreateRecipeAsync(Recipe);
                 return RedirectToPage("Index");
             }
 

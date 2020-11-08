@@ -6,27 +6,26 @@ using RecipeBook2.Core.Entities;
 
 namespace RecipeBook2.Web.Pages.Ingredients
 {
-    public class EditModel : PageModel
+    public class CreateIngredientModel : PageModel
     {
         private readonly IngredientController ingredientController;
         [BindProperty]
         public Ingredient Ingredient { get; set; }
-        public EditModel(IngredientController ingredientController)
+        public CreateIngredientModel(IngredientController ingredientController)
         {
             this.ingredientController = ingredientController;
         }
-
-        public async Task OnGetAsync(int id)
+        public void OnGet()
         {
-            Ingredient = await ingredientController.GetIngredientAsync(id);
         }
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                await ingredientController.UpdateIngredientAsync(Ingredient);
+                await ingredientController.CreateIngredientAsync(Ingredient);
                 return RedirectToPage("Index");
             }
+
             return Page();
         }
     }

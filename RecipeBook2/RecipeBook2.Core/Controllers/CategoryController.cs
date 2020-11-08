@@ -22,6 +22,11 @@ namespace RecipeBook2.Core.Controllers
         {
             return await UnitOfWork.Categories.GetCategoriesByParentIdAsync(parentId);
         }
+        public async Task<List<Category>> GetAllCategoriesAsync()
+        {
+            return await UnitOfWork.Categories.GetAllAsync();
+        }
+
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             if (category == null)

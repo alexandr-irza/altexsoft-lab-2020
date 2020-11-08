@@ -1,5 +1,5 @@
 ﻿@page
-@model Recipes.EditModel
+@model Recipes.EditRecipeModel
 @{
     ViewData["Title"] = "Edit Recipe";
 }
@@ -9,6 +9,8 @@
     <form method="post">
         <input type="hidden" asp-for="Recipe.Id" />
         <input type="hidden" asp-for="Recipe.CategoryId" />
+        <input type="hidden" asp-for="Recipe.Ingredients" />
+        <input type="hidden" asp-for="Recipe.Directions" />
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group row">
             <div class="col-4">
@@ -24,6 +26,14 @@
             </div>
             <div class="col-3">
                 @Html.TextAreaFor(m => m.Recipe.Description, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayName("Category:")
+            </div>
+            <div class="col-6">
+                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"))
             </div>
         </div>
         <div class="container row p-0 m-0">
@@ -43,15 +53,11 @@
             {
                 <tr>
                     <td>
-                        <input hidden asp-for="Recipe.Ingredients[i].IngredientId" class="form-control" />
-                        <input hidden asp-for="Recipe.Ingredients[i].RecipeId" class="form-control" />
-                        <input hidden asp-for="Recipe.Ingredients[i].Ingredient.Id" class="form-control" />
-                        <input hidden asp-for="Recipe.Ingredients[i].Ingredient.Name" class="form-control" />
-                        @Html.TextBoxFor(m => m.Recipe.Ingredients[i].Ingredient.Name, new { @class = "form-control" })
+                        @Html.HiddenFor(m => m.Recipe.Ingredients[i].RecipeId)
+                        @Html.DropDownListFor(m => m.Recipe.Ingredients[i].IngredientId, new SelectList(Model.Ingredients, "Id", "Name"), "Select Ingredient")
                     </td>
                     <td>
-                        <input hidden asp-for="Recipe.Ingredients[i].Amount" class="form-control" />
-                        @Html.TextBoxFor(m => m.Recipe.Ingredients[i].Amount, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Recipe.Ingredients[i].Amount, new { @class = "form-control", @type = "number", @min = "1" })
                     </td>
                     <td>
                         <button asp-page-handler="DeleteIngredient" asp-route-ingredientId="@Model.Recipe.Ingredients[i].IngredientId" onclick="return confirm('Are you sure you want to delete ingredient?')" class="btn btn-danger btn-sm">Delete</button>
@@ -95,7 +101,7 @@
 
         <div class="form-group row">
             <div class="col-3 offset-4">
-                <button type="submit" class="btn btn-primary form-control" disabled>Update</button>
+                <button asp-page-handler="Post" class="btn btn-primary form-control">Update</button>
             </div>
             <div class="col-3">
                 <a asp-page="Index" class="btn btn-success form-control">Back to List</a>

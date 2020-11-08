@@ -9,19 +9,29 @@ using RecipeBook2.Core.Entities;
 
 namespace RecipeBook2.Web.Pages.Recipes
 {
-    public class EditModel : PageModel
+    public class EditRecipeModel : PageModel
     {
         private readonly RecipeController recipeController;
+        private readonly IngredientController ingredientController;
+        private readonly CategoryController categoryController;
+
         [BindProperty(SupportsGet = true)]
         public Recipe Recipe { get; set; }
-        public EditModel(RecipeController recipeController)
+        public List<Ingredient> Ingredients { get; set; }
+        public List<Category> Categories { get; set; }
+        public EditRecipeModel(RecipeController recipeController, IngredientController ingredientController, CategoryController categoryController)
         {
             this.recipeController = recipeController;
+            this.ingredientController = ingredientController;
+            this.categoryController = categoryController;
         }
 
-        public async Task OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             Recipe = await recipeController.GetRecipeAsync(id);
+            Ingredients = await ingredientController.GetIngredientsAsync();
+            Categories = await categoryController.GetAllCategoriesAsync();
+            return Page();
         }
         public async Task<IActionResult> OnPostAsync()
         {
@@ -34,8 +44,9 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
-        public IActionResult OnPostDeleteIngredient(int ingredientId)
+        public async Task<IActionResult> OnPostDeleteIngredientAsync(int ingredientId)
         {
+            Ingredients = await ingredientController.GetIngredientsAsync();
             var item = Recipe.Ingredients.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.IngredientId == ingredientId);
             if (item != null)
             {
@@ -44,8 +55,10 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
-        public IActionResult OnPostDeleteDirection(int stepId)
+        public async Task<IActionResult> OnPostDeleteDirectionAsync(int stepId)
         {
+            Ingredients = await ingredientController.GetIngredientsAsync();
+
             var item = Recipe.Directions.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.Id == stepId);
             if (item != null)
             {
@@ -54,25 +67,24 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
-        public IActionResult OnPostAddDirection()
+        public async Task OnPostAddDirectionAsync()
         {
-            var item = new RecipeStep { RecipeId = Recipe.Id, StepNumber = 1, StepInstruction = "Test"};
+            Ingredients = await ingredientController.GetIngredientsAsync();
+            var item = new RecipeStep { RecipeId = Recipe.Id, StepNumber = Recipe.Directions.Count + 1 };
             if (item != null)
             {
                 Recipe.Directions.Add(item);
             }
-            return Page();
         }
 
-        public IActionResult OnPostAddIngredient()
+        public async Task OnPostAddIngredientAsync()
         {
-            var item = new RecipeIngredient { RecipeId = Recipe.Id, IngredientId = 1, Amount = 10 };
-            item.Ingredient = new Ingredient { Id = 1, Name = "Muka" };
+            Ingredients = await ingredientController.GetIngredientsAsync();
+            var item = new RecipeIngredient { RecipeId = Recipe.Id };
             if (item != null)
             {
                 Recipe.Ingredients.Add(item);
             }
-            return Page();
         }
     }
 }

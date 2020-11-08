@@ -6,35 +6,31 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RecipeBook2.Core.Controllers;
 using RecipeBook2.Core.Entities;
-using RecipeBook2.Infrastructure.Data;
 
 namespace RecipeBook2.Web.Pages.Categories
 {
-    public class CreateModel : PageModel
+    public class EditCategoryModel : PageModel
     {
         private readonly CategoryController categoryController;
         [BindProperty]
         public Category Category { get; set; }
-        [BindProperty]
-        public int? ParentId { get; set; }
-        public CreateModel(CategoryController categoryController)
+        public EditCategoryModel(CategoryController categoryController)
         {
             this.categoryController = categoryController;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync(int id)
         {
-
+            Category = await categoryController.GetCategoryAsync(id);
         }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                Category.ParentId = ParentId;
-                await categoryController.CreateCategoryAsync(Category);
-                return RedirectToPage("Index", new { id = ParentId });
+                await categoryController.UpdateCategoryAsync(Category);
+                return RedirectToPage("Index");
             }
-
             return Page();
         }
     }

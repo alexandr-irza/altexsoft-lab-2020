@@ -8,7 +8,7 @@
         <h2 class="text-info">Recipes List</h2>
     </div>
     <div class="col-3">
-        <a asp-page="Create" class="btn btn-info form-control text-white">New Recipe</a>
+        <a asp-page="CreateRecipe" class="btn btn-info form-control text-white">New Recipe</a>
     </div>
 
     <div class="col-12 border p-3 mt-3">
@@ -35,7 +35,7 @@
                             </td>
                             <td>
                                 <button asp-page-handler="Delete" asp-route-id="@recipe.Id" onclick="return confirm('Are you sure you want to delete recipe?')" class="btn btn-danger btn-sm">Delete</button>
-                                <a asp-page="Edit" asp-route-id="@recipe.Id" class="btn btn-success btn-sm text-white">Edit</a>
+                                <a asp-page="EditRecipe" asp-route-id="@recipe.Id" class="btn btn-success btn-sm text-white">Edit</a>
                             </td>
                         </tr>
                     }

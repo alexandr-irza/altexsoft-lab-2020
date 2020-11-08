@@ -67,6 +67,10 @@ namespace RecipeBook2.Core.Controllers
 
             item.Name = recipe.Name;
             item.Description = recipe.Description;
+            item.Ingredients.Clear();
+            item.Ingredients = recipe.Ingredients;
+            item.Directions.Clear();
+            item.Directions = recipe.Directions;
             await UnitOfWork.SaveChangesAsync();
         }
 

@@ -14,14 +14,16 @@ namespace RecipeBook2.Web.Pages.Categories
     {
         private readonly CategoryController categoryController;
         public List<Category> Categories { get; set; }
- 
+        [BindProperty]
+        public int? CategoryId { get; set; }
+
         public IndexModel(CategoryController categoryController)
         {
             this.categoryController = categoryController;
         }
         public async Task OnGetAsync(int? id)
         {
-            ViewData["Id"] = id;
+            CategoryId = id;
             Categories = await categoryController.GetCategoriesAsync(id);
         }
 
