@@ -1,0 +1,11 @@
+﻿@page
+@model _EditNamePartialModel
+
+<div class="form-group row">
+    <div class="col-4">
+        @Html.DisplayNameFor(m => m.Name)
+    </div>
+    <div class="col-6">
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+    </div>
+</div>
