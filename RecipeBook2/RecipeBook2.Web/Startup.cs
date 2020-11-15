@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RecipeBook2.Core.Interfaces;
-using RecipeBook2.Infrastructure.Data;
+using RecipeBook2.Core.Validators;
 using RecipeBook2.Infrastructure.Extensions;
 
 namespace RecipeBook2.Web
@@ -27,6 +22,13 @@ namespace RecipeBook2.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInfrastructure(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddMvc().AddFluentValidation(s =>
+            {
+                s.RegisterValidatorsFromAssemblyContaining<CategoryValidator>();
+                s.RegisterValidatorsFromAssemblyContaining<RecipeValidator>();
+                s.RegisterValidatorsFromAssemblyContaining<IngredientValidator>();
+                s.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+            });
             services.AddRazorPages().AddRazorRuntimeCompilation();
         }
 

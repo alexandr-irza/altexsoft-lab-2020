@@ -47,6 +47,7 @@ namespace RecipeBook2.Web.Pages.Recipes
         public async Task<IActionResult> OnPostDeleteIngredientAsync(int ingredientId)
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
+            Categories = await categoryController.GetAllCategoriesAsync();
             var item = Recipe.Ingredients.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.IngredientId == ingredientId);
             if (item != null)
             {
@@ -58,7 +59,7 @@ namespace RecipeBook2.Web.Pages.Recipes
         public async Task<IActionResult> OnPostDeleteDirectionAsync(int stepId)
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
-
+            Categories = await categoryController.GetAllCategoriesAsync();
             var item = Recipe.Directions.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.Id == stepId);
             if (item != null)
             {
@@ -70,6 +71,7 @@ namespace RecipeBook2.Web.Pages.Recipes
         public async Task OnPostAddDirectionAsync()
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
+            Categories = await categoryController.GetAllCategoriesAsync();
             var item = new RecipeStep { RecipeId = Recipe.Id, StepNumber = Recipe.Directions.Count + 1 };
             if (item != null)
             {
@@ -80,6 +82,7 @@ namespace RecipeBook2.Web.Pages.Recipes
         public async Task OnPostAddIngredientAsync()
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
+            Categories = await categoryController.GetAllCategoriesAsync();
             var item = new RecipeIngredient { RecipeId = Recipe.Id };
             if (item != null)
             {

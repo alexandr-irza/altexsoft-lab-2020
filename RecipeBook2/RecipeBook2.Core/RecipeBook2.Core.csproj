@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RecipeBook2.SharedKernel\RecipeBook2.SharedKernel.csproj" />
   </ItemGroup>
 
