@@ -20,8 +20,11 @@
                         <th>
                             @Html.DisplayNameFor(m => m.Recipes.First().Name)
                         </th>
-                        <th colspan="2">
+                        <th>
                             @Html.DisplayNameFor(m => m.Recipes.First().Description)
+                        </th>
+                        <th colspan="2">
+                            @Html.DisplayName("Category Name")
                         </th>
                     </tr>
                     @foreach (var recipe in Model.Recipes)
@@ -33,6 +36,9 @@
                             <td>
                                 @Html.DisplayFor(m => recipe.Description)
                             </td>
+                            <td>
+                                @Html.DisplayFor(m => recipe.Category.Name)
+                            </td>                            
                             <td>
                                 <button asp-page-handler="Delete" asp-route-id="@recipe.Id" onclick="return confirm('Are you sure you want to delete recipe?')" class="btn btn-danger btn-sm">Delete</button>
                                 <a asp-page="EditRecipe" asp-route-id="@recipe.Id" class="btn btn-success btn-sm text-white">Edit</a>

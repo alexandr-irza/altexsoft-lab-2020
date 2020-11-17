@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,14 +10,19 @@ namespace RecipeBook2.Web.Pages.Recipes
     public class CreateRecipeModel : PageModel
     {
         private readonly RecipeController recipeController;
+        private readonly CategoryController categoryController;
+
         [BindProperty]
         public Recipe Recipe { get; set; }
-        public CreateRecipeModel(RecipeController recipeController)
+        public List<Category> Categories { get; set; }
+        public CreateRecipeModel(RecipeController recipeController, CategoryController categoryController)
         {
             this.recipeController = recipeController;
+            this.categoryController = categoryController;
         }
-        public void OnGet()
+        public async Task OnGetAsync()
         {
+            Categories = await categoryController.GetAllCategoriesAsync();
         }
         public async Task<IActionResult> OnPostAsync()
         {

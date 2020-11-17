@@ -1,10 +1,12 @@
 ﻿using RecipeBook2.SharedKernel;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeBook2.Core.Entities
 {
     public class Recipe: BaseEntity
     {
+        [Display(Name = "Recipe Name")]
         public string Name { get; set; }
         public string Description { get; set; }
         public int? CategoryId { get; set; }

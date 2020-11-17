@@ -10,7 +10,7 @@ namespace RecipeBook2.Infrastructure.Data
 {
     public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity 
     {
-        private RecipeBookContext _context;
+        private readonly RecipeBookContext _context;
         public BaseRepository(RecipeBookContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));

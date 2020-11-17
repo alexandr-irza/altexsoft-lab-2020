@@ -66,6 +66,7 @@ namespace RecipeBook2.Core.Controllers
                 throw new NotFoundException($"{ nameof(Recipe) } ({ recipe.Id }) not found.");
 
             item.Name = recipe.Name;
+            item.CategoryId = recipe.CategoryId;
             item.Description = recipe.Description;
             item.Ingredients.Clear();
             item.Ingredients = recipe.Ingredients;

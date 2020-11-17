@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using RecipeBook2.Core.Controllers;
 using RecipeBook2.Core.Entities;
+using RecipeBook2.Web.ViewModels;
 
 namespace RecipeBook2.Web.Pages.Recipes
 {
@@ -44,6 +46,71 @@ namespace RecipeBook2.Web.Pages.Recipes
             return Page();
         }
 
+        public async Task<PartialViewResult> OnGetAddIngredientModalPartialAsync(int recipeId)
+        {
+            var ingredients = await ingredientController.GetIngredientsAsync();
+            var recipeIngredient = new RecipeIngredient 
+            { 
+                Amount = 1, 
+                RecipeId = recipeId
+            };
+            var addIngredient = new AddIngredientViewModel
+            {
+                Ingredients = ingredients,
+                RecipeIngredient = recipeIngredient
+            };
+            return new PartialViewResult
+            {
+                ViewName = "_AddIngredientModalPartial",
+                ViewData = new ViewDataDictionary<AddIngredientViewModel>(ViewData, addIngredient)
+            };
+        }
+
+        public async Task<PartialViewResult> OnPostAddIngredientModalPartialAsync(AddIngredientViewModel model)
+        {
+            ModelState.Remove("Name"); //AIrza I do not know why Name is here, I do not have it in my AddIngredientViewModel model
+            if (ModelState.IsValid)
+            {
+                Recipe.Ingredients.Add(model.RecipeIngredient); //AIrza Here always null
+            }
+            var ingredients = await ingredientController.GetIngredientsAsync();
+            model.Ingredients = ingredients;
+            return new PartialViewResult
+            {
+                ViewName = "_AddIngredientModalPartial",
+                ViewData = new ViewDataDictionary<AddIngredientViewModel>(ViewData, model)
+            };
+        }
+
+        public PartialViewResult OnGetAddDirectionModalPartial(int recipeId, int stepsCount)
+        {
+            var recipeStep = new RecipeStep
+            {
+                StepNumber = stepsCount + 1,
+                RecipeId = recipeId
+            };
+            return new PartialViewResult
+            {
+                ViewName = "_AddDirectionModalPartial",
+                ViewData = new ViewDataDictionary<RecipeStep>(ViewData, recipeStep)
+            };
+        }
+
+        public PartialViewResult OnPostAddDirectionModalPartial(RecipeStep model)
+        {
+            ModelState.Remove("Name"); //AIrza I do not know why Name is here, I do not have it in my AddIngredientViewModel model
+            if (ModelState.IsValid)
+            {
+                Recipe.Directions.Add(model); //AIrza Here always null
+            }
+
+            return new PartialViewResult
+            {
+                ViewName = "_AddDirectionModalPartial",
+                ViewData = new ViewDataDictionary<RecipeStep>(ViewData, model)
+            };
+        }
+
         public async Task<IActionResult> OnPostDeleteIngredientAsync(int ingredientId)
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
@@ -66,28 +133,6 @@ namespace RecipeBook2.Web.Pages.Recipes
                 Recipe.Directions.Remove(item);
             }
             return Page();
-        }
-
-        public async Task OnPostAddDirectionAsync()
-        {
-            Ingredients = await ingredientController.GetIngredientsAsync();
-            Categories = await categoryController.GetAllCategoriesAsync();
-            var item = new RecipeStep { RecipeId = Recipe.Id, StepNumber = Recipe.Directions.Count + 1 };
-            if (item != null)
-            {
-                Recipe.Directions.Add(item);
-            }
-        }
-
-        public async Task OnPostAddIngredientAsync()
-        {
-            Ingredients = await ingredientController.GetIngredientsAsync();
-            Categories = await categoryController.GetAllCategoriesAsync();
-            var item = new RecipeIngredient { RecipeId = Recipe.Id };
-            if (item != null)
-            {
-                Recipe.Ingredients.Add(item);
-            }
         }
     }
 }

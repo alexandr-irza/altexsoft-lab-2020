@@ -30,7 +30,7 @@ namespace RecipeBook2.Web.Pages.Categories
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
             await categoryController.RemoveCategoryAsync(id);
-            return RedirectToPage("Index", new { id = id });
+            return RedirectToPage("Index", new { id });
         }
     }
 }

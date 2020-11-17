@@ -50,6 +50,7 @@ namespace RecipeBook2.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCookiePolicy();
 
             app.UseAuthorization();
 

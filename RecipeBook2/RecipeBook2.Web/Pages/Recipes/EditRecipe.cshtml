@@ -1,16 +1,15 @@
-﻿@page
+﻿@page 
 @model Recipes.EditRecipeModel
 @{
     ViewData["Title"] = "Edit Recipe";
 }
 
 <h2 class="text-info">Edit Recipe</h2>
+<div id="modal-container"></div>
+
 <div class="border container" style="padding:30px">
     <form method="post">
         <input type="hidden" asp-for="Recipe.Id" />
-        <input type="hidden" asp-for="Recipe.CategoryId" />
-        <input type="hidden" asp-for="Recipe.Ingredients" />
-        <input type="hidden" asp-for="Recipe.Directions" />
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
         <div class="form-group row">
             <div class="col-4">
@@ -18,6 +17,7 @@
             </div>
             <div class="col-6">
                 @Html.TextBoxFor(m => m.Recipe.Name, new { @class = "form-control" })
+                <span asp-validation-for="Recipe.Name" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
@@ -41,7 +41,9 @@
                 @Html.DisplayName("Ingredients:")
             </div>
             <div class="col-3 pb-1">
-                <button class="btn btn-info form-control text-white" asp-page-handler="AddIngredient" asp-route-id="@Model.Recipe.Id">Add Ingredient</button>
+                <button type="button" class="btn form-control btn-info text-white" data-toggle="ajax-modal" data-url="@Url.Page("EditRecipe", "AddIngredientModalPartial", new { recipeId = Model.Recipe.Id })" data-target="#add-ingredient">
+                    Add Ingredient
+                </button>
             </div>
         </div>
         <table class="table table-striped border">
@@ -71,7 +73,9 @@
                 @Html.DisplayName("Directions:")
             </div>
             <div class="col-3 pb-1">
-                <button class="btn btn-info form-control text-white" asp-page-handler="AddDirection" asp-route-id="@Model.Recipe.Id">Add Direction</button>
+                <button type="button" class="btn form-control btn-info text-white" data-toggle="ajax-modal" data-url="@Url.Page("EditRecipe", "AddDirectionModalPartial", new { recipeId = Model.Recipe.Id, stepsCount = Model.Recipe.Directions.Count })" data-target="#add-deirection">
+                    Add direction
+                </button>
             </div>
         </div>
         <table class="table table-striped border">
@@ -83,13 +87,10 @@
             {
                 <tr>
                     <td>
-                        <input hidden asp-for="Recipe.Directions[i].Id" class="form-control" />
                         <input hidden asp-for="Recipe.Directions[i].RecipeId" class="form-control" />
-                        <input hidden asp-for="Recipe.Directions[i].StepNumber" class="form-control" />
                         @Html.DisplayFor(m => m.Recipe.Directions[i].StepNumber)
                     </td>
                     <td>
-                        <input hidden asp-for="Recipe.Directions[i].StepInstruction" class="form-control" />
                         @Html.TextBoxFor(m => m.Recipe.Directions[i].StepInstruction, new { @class = "form-control" })
                     </td>
                     <td>
@@ -109,6 +110,8 @@
         </div>
     </form>
 </div>
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
