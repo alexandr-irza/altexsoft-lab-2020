@@ -11,7 +11,6 @@
 
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
         event.preventDefault();
-        var form1 = $('#add-ingredient-form');
 
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');

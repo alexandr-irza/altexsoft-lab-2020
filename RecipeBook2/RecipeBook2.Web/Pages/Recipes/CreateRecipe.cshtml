@@ -30,9 +30,12 @@
                 @Html.DisplayName("Category:")
             </div>
             <div class="col-6">
-                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Select Category")
+                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Root Category")
             </div>
         </div>
+
+        <h6 class="text-info">To add ingredients and coocking steps, please press "Create" and than edit recipe</h6>
+            
         <div class="form-group row">
             <div class="col-3 offset-4">
                 <button type="submit" class="btn btn-primary form-control">Create</button>

@@ -3,6 +3,7 @@ using RecipeBook2.Core.Exceptions;
 using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
@@ -68,10 +69,22 @@ namespace RecipeBook2.Core.Controllers
             item.Name = recipe.Name;
             item.CategoryId = recipe.CategoryId;
             item.Description = recipe.Description;
-            item.Ingredients.Clear();
-            item.Ingredients = recipe.Ingredients;
-            item.Directions.Clear();
-            item.Directions = recipe.Directions;
+            foreach (var oldIngredient in item.Ingredients)
+            {
+                var newIngredient = recipe.Ingredients.SingleOrDefault(x => x.IngredientId == oldIngredient.IngredientId);
+                if (newIngredient != null)
+                {
+                    oldIngredient.Amount = newIngredient.Amount;
+                }
+            }
+            foreach (var oldDirection in item.Directions)
+            {
+                var newDirection = recipe.Directions.SingleOrDefault(x => x.Id == oldDirection.Id);
+                if (newDirection != null)
+                {
+                    oldDirection.StepInstruction = newDirection.StepInstruction;
+                }
+            }
             await UnitOfWork.SaveChangesAsync();
         }
 

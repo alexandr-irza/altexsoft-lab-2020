@@ -25,8 +25,6 @@ namespace RecipeBook2.Web
             services.AddMvc().AddFluentValidation(s =>
             {
                 s.RegisterValidatorsFromAssemblyContaining<CategoryValidator>();
-                s.RegisterValidatorsFromAssemblyContaining<RecipeValidator>();
-                s.RegisterValidatorsFromAssemblyContaining<IngredientValidator>();
                 s.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
             });
             services.AddRazorPages().AddRazorRuntimeCompilation();

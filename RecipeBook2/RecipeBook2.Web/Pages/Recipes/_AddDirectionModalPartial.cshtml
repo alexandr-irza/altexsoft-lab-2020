@@ -14,6 +14,7 @@
                     <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
                     <div class="form-group">
                         @Html.DisplayName("Step Number: ")
+                        @Html.HiddenFor(m => m.RecipeId)
                         @Html.TextBoxFor(m => m.StepNumber, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                         <span asp-validation-for="StepNumber" class="text-danger"></span>
                     </div>

@@ -33,7 +33,7 @@
                 @Html.DisplayName("Category:")
             </div>
             <div class="col-6">
-                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"))
+                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Root Category")
             </div>
         </div>
         <div class="container row p-0 m-0">
@@ -56,13 +56,14 @@
                 <tr>
                     <td>
                         @Html.HiddenFor(m => m.Recipe.Ingredients[i].RecipeId)
-                        @Html.DropDownListFor(m => m.Recipe.Ingredients[i].IngredientId, new SelectList(Model.Ingredients, "Id", "Name"), "Select Ingredient")
+                        @Html.HiddenFor(m => m.Recipe.Ingredients[i].IngredientId)
+                        @Html.DropDownListFor(m => m.Recipe.Ingredients[i].IngredientId, new SelectList(Model.Ingredients, "Id", "Name"), new { disabled = true })
                     </td>
                     <td>
                         @Html.TextBoxFor(m => m.Recipe.Ingredients[i].Amount, new { @class = "form-control", @type = "number", @min = "1" })
                     </td>
                     <td>
-                        <button asp-page-handler="DeleteIngredient" asp-route-ingredientId="@Model.Recipe.Ingredients[i].IngredientId" onclick="return confirm('Are you sure you want to delete ingredient?')" class="btn btn-danger btn-sm">Delete</button>
+                        <button asp-page-handler="DeleteIngredient" asp-route-ingredientId="@Model.Recipe.Ingredients[i].IngredientId" asp-route-recipeId="@Model.Recipe.Id" onclick="return confirm('Are you sure you want to delete ingredient?')" class="btn btn-danger btn-sm">Delete</button>
                     </td>
                 </tr>
             }
@@ -87,14 +88,15 @@
             {
                 <tr>
                     <td>
-                        <input hidden asp-for="Recipe.Directions[i].RecipeId" class="form-control" />
+                        @Html.HiddenFor(m => m.Recipe.Directions[i].Id)
+                        @Html.HiddenFor(m => m.Recipe.Directions[i].RecipeId)
                         @Html.DisplayFor(m => m.Recipe.Directions[i].StepNumber)
                     </td>
                     <td>
                         @Html.TextBoxFor(m => m.Recipe.Directions[i].StepInstruction, new { @class = "form-control" })
                     </td>
                     <td>
-                        <button asp-page-handler="DeleteDirection" asp-route-stepId="@Model.Recipe.Directions[i].Id" onclick="return confirm('Are you sure you want to delete step?')" class="btn btn-danger btn-sm">Delete</button>
+                        <button asp-page-handler="DeleteDirection" asp-route-stepId="@Model.Recipe.Directions[i].Id" asp-route-recipeId="@Model.Recipe.Id" onclick="return confirm('Are you sure you want to delete step?')" class="btn btn-danger btn-sm">Delete</button>
                     </td>
                 </tr>
             }

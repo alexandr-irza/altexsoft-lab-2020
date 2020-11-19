@@ -68,10 +68,13 @@ namespace RecipeBook2.Web.Pages.Recipes
 
         public async Task<PartialViewResult> OnPostAddIngredientModalPartialAsync(AddIngredientViewModel model)
         {
-            ModelState.Remove("Name"); //AIrza I do not know why Name is here, I do not have it in my AddIngredientViewModel model
+            Recipe = await recipeController.GetRecipeAsync(model.RecipeIngredient.RecipeId);
+
+            ModelState.Remove("Name"); //AIrza Remove property from main model
             if (ModelState.IsValid)
             {
-                Recipe.Ingredients.Add(model.RecipeIngredient); //AIrza Here always null
+                Recipe.Ingredients.Add(model.RecipeIngredient);
+                await recipeController.UpdateRecipeAsync(Recipe);
             }
             var ingredients = await ingredientController.GetIngredientsAsync();
             model.Ingredients = ingredients;
@@ -96,12 +99,14 @@ namespace RecipeBook2.Web.Pages.Recipes
             };
         }
 
-        public PartialViewResult OnPostAddDirectionModalPartial(RecipeStep model)
+        public async Task<PartialViewResult> OnPostAddDirectionModalPartialAsync(RecipeStep model)
         {
-            ModelState.Remove("Name"); //AIrza I do not know why Name is here, I do not have it in my AddIngredientViewModel model
+            Recipe = await recipeController.GetRecipeAsync(model.RecipeId);
+            ModelState.Remove("Name"); //AIrza Remove property from main model
             if (ModelState.IsValid)
             {
-                Recipe.Directions.Add(model); //AIrza Here always null
+                Recipe.Directions.Add(model);
+                await recipeController.UpdateRecipeAsync(Recipe);
             }
 
             return new PartialViewResult
@@ -111,26 +116,30 @@ namespace RecipeBook2.Web.Pages.Recipes
             };
         }
 
-        public async Task<IActionResult> OnPostDeleteIngredientAsync(int ingredientId)
+        public async Task<IActionResult> OnPostDeleteIngredientAsync(int recipeId, int ingredientId)
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
             Categories = await categoryController.GetAllCategoriesAsync();
+            Recipe = await recipeController.GetRecipeAsync(recipeId);
             var item = Recipe.Ingredients.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.IngredientId == ingredientId);
             if (item != null)
             {
                 Recipe.Ingredients.Remove(item);
+                await recipeController.UpdateRecipeAsync(Recipe);
             }
             return Page();
         }
 
-        public async Task<IActionResult> OnPostDeleteDirectionAsync(int stepId)
+        public async Task<IActionResult> OnPostDeleteDirectionAsync(int recipeId, int stepId)
         {
             Ingredients = await ingredientController.GetIngredientsAsync();
             Categories = await categoryController.GetAllCategoriesAsync();
+            Recipe = await recipeController.GetRecipeAsync(recipeId);
             var item = Recipe.Directions.FirstOrDefault(x => x.RecipeId == Recipe.Id && x.Id == stepId);
             if (item != null)
             {
                 Recipe.Directions.Remove(item);
+                await recipeController.UpdateRecipeAsync(Recipe);
             }
             return Page();
         }
