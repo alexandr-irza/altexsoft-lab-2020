@@ -1,0 +1,120 @@
+﻿@page 
+@model Recipes.EditRecipeModel
+@{
+    ViewData["Title"] = "Edit Recipe";
+}
+
+<h2 class="text-info">Edit Recipe</h2>
+<div id="modal-container"></div>
+
+<div class="border container" style="padding:30px">
+    <form method="post">
+        <input type="hidden" asp-for="Recipe.Id" />
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayNameFor(m => m.Recipe.Name)
+            </div>
+            <div class="col-6">
+                @Html.TextBoxFor(m => m.Recipe.Name, new { @class = "form-control" })
+                <span asp-validation-for="Recipe.Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayNameFor(m => m.Recipe.Description)
+            </div>
+            <div class="col-3">
+                @Html.TextAreaFor(m => m.Recipe.Description, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayName("Category:")
+            </div>
+            <div class="col-6">
+                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Root Category")
+            </div>
+        </div>
+        <div class="container row p-0 m-0">
+            <div class="col-9">
+                @Html.DisplayName("Ingredients:")
+            </div>
+            <div class="col-3 pb-1">
+                <button type="button" class="btn form-control btn-info text-white" data-toggle="ajax-modal" data-url="@Url.Page("EditRecipe", "AddIngredientModalPartial", new { recipeId = Model.Recipe.Id })" data-target="#add-ingredient">
+                    Add Ingredient
+                </button>
+            </div>
+        </div>
+        <table class="table table-striped border">
+            <tr class="table-secondary">
+                <td>Name</td>
+                <td colspan="2">Amount</td>
+            </tr>
+            @for (var i = 0; i < Model.Recipe.Ingredients.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(m => m.Recipe.Ingredients[i].RecipeId)
+                        @Html.HiddenFor(m => m.Recipe.Ingredients[i].IngredientId)
+                        @Html.DropDownListFor(m => m.Recipe.Ingredients[i].IngredientId, new SelectList(Model.Ingredients, "Id", "Name"), new { disabled = true })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Recipe.Ingredients[i].Amount, new { @class = "form-control", @type = "number", @min = "1" })
+                    </td>
+                    <td>
+                        <button asp-page-handler="DeleteIngredient" asp-route-ingredientId="@Model.Recipe.Ingredients[i].IngredientId" asp-route-recipeId="@Model.Recipe.Id" onclick="return confirm('Are you sure you want to delete ingredient?')" class="btn btn-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="container row p-0 m-0">
+            <div class="col-9">
+                @Html.DisplayName("Directions:")
+            </div>
+            <div class="col-3 pb-1">
+                <button type="button" class="btn form-control btn-info text-white" data-toggle="ajax-modal" data-url="@Url.Page("EditRecipe", "AddDirectionModalPartial", new { recipeId = Model.Recipe.Id, stepsCount = Model.Recipe.Directions.Count })" data-target="#add-deirection">
+                    Add direction
+                </button>
+            </div>
+        </div>
+        <table class="table table-striped border">
+            <tr class="table-secondary">
+                <td>Number</td>
+                <td colspan="2">Description</td>
+            </tr>
+            @for (var i = 0; i < Model.Recipe.Directions.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(m => m.Recipe.Directions[i].Id)
+                        @Html.HiddenFor(m => m.Recipe.Directions[i].RecipeId)
+                        @Html.DisplayFor(m => m.Recipe.Directions[i].StepNumber)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Recipe.Directions[i].StepInstruction, new { @class = "form-control" })
+                    </td>
+                    <td>
+                        <button asp-page-handler="DeleteDirection" asp-route-stepId="@Model.Recipe.Directions[i].Id" asp-route-recipeId="@Model.Recipe.Id" onclick="return confirm('Are you sure you want to delete step?')" class="btn btn-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="form-group row">
+            <div class="col-3 offset-4">
+                <button asp-page-handler="Post" class="btn btn-primary form-control">Update</button>
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -18,10 +18,15 @@ namespace RecipeBook2.Core.Controllers
             return await UnitOfWork.Categories.GetAsync(id);
         }
 
-        public async Task<List<Category>> GetCategoriesAsync(int parentId)
+        public async Task<List<Category>> GetCategoriesAsync(int? parentId)
         {
             return await UnitOfWork.Categories.GetCategoriesByParentIdAsync(parentId);
         }
+        public async Task<List<Category>> GetAllCategoriesAsync()
+        {
+            return await UnitOfWork.Categories.GetAllAsync();
+        }
+
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             if (category == null)
@@ -55,9 +60,10 @@ namespace RecipeBook2.Core.Controllers
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            _ = await UnitOfWork.Categories.GetAsync(category.Id) ??
+            var item = await UnitOfWork.Categories.GetAsync(category.Id);
+            if (item == null)
                 throw new NotFoundException($"{ nameof(Category) } ({ category.Id }) not found.");
-            UnitOfWork.Categories.Update(category);
+            item.Name = category.Name;
             await UnitOfWork.SaveChangesAsync();
         }
     }

@@ -1,0 +1,56 @@
+﻿@page
+@model Recipes.IndexModel
+@{
+    ViewData["Title"] = "Recipes List";
+}
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Recipes List</h2>
+    </div>
+    <div class="col-3">
+        <a asp-page="CreateRecipe" class="btn btn-info form-control text-white">New Recipe</a>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.Recipes.Count > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table-secondary">
+                        <th>
+                            @Html.DisplayNameFor(m => m.Recipes.First().Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Recipes.First().Description)
+                        </th>
+                        <th colspan="2">
+                            @Html.DisplayName("Category Name")
+                        </th>
+                    </tr>
+                    @foreach (var recipe in Model.Recipes)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => recipe.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => recipe.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => recipe.Category.Name)
+                            </td>                            
+                            <td>
+                                <button asp-page-handler="Delete" asp-route-id="@recipe.Id" onclick="return confirm('Are you sure you want to delete recipe?')" class="btn btn-danger btn-sm">Delete</button>
+                                <a asp-page="EditRecipe" asp-route-id="@recipe.Id" class="btn btn-success btn-sm text-white">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No recipes available.</p>
+            }
+        </form>
+    </div>
+</div>

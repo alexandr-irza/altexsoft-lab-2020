@@ -1,0 +1,54 @@
+﻿@page
+@model Recipes.CreateRecipeModel
+@{
+    ViewData["Title"] = "Create Recipe";
+}
+
+<h2 class="text-info">Create Recipe</h2>
+<div class="border container" style="padding:30px">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayNameFor(m => m.Recipe.Name)
+            </div>
+            <div class="col-6">
+                @Html.TextBoxFor(m => m.Recipe.Name, new { @class = "form-control" })
+                <span asp-validation-for="Recipe.Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayNameFor(m => m.Recipe.Description)
+            </div>
+            <div class="col-6">
+                @Html.TextAreaFor(m => m.Recipe.Description, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                @Html.DisplayName("Category:")
+            </div>
+            <div class="col-6">
+                @Html.DropDownListFor(m => m.Recipe.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Root Category")
+            </div>
+        </div>
+
+        <h6 class="text-info">To add ingredients and coocking steps, please press "Create" and than edit recipe</h6>
+            
+        <div class="form-group row">
+            <div class="col-3 offset-4">
+                <button type="submit" class="btn btn-primary form-control">Create</button>
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

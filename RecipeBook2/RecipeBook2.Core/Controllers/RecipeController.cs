@@ -3,6 +3,7 @@ using RecipeBook2.Core.Exceptions;
 using RecipeBook2.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook2.Core.Controllers
@@ -18,9 +19,13 @@ namespace RecipeBook2.Core.Controllers
             var recipe = await UnitOfWork.Recipes.GetAsync(id);
             if (recipe == null)
                 throw new EntryPointNotFoundException();
-
             return recipe;
         }
+        public async Task<List<Recipe>> GetAllRecipesAsync()
+        {
+            return await UnitOfWork.Recipes.GetAllAsync();
+        }
+
         public async Task<List<Recipe>> GetRecipesAsync(int? categoryId = null)
         {
             return await UnitOfWork.Recipes.GetRecipesByCategoryIdAsync(categoryId);
@@ -60,7 +65,26 @@ namespace RecipeBook2.Core.Controllers
             var item = await UnitOfWork.Recipes.GetAsync(recipe.Id);
             if (item == null)
                 throw new NotFoundException($"{ nameof(Recipe) } ({ recipe.Id }) not found.");
-            UnitOfWork.Recipes.Update(item);
+
+            item.Name = recipe.Name;
+            item.CategoryId = recipe.CategoryId;
+            item.Description = recipe.Description;
+            foreach (var oldIngredient in item.Ingredients)
+            {
+                var newIngredient = recipe.Ingredients.SingleOrDefault(x => x.IngredientId == oldIngredient.IngredientId);
+                if (newIngredient != null)
+                {
+                    oldIngredient.Amount = newIngredient.Amount;
+                }
+            }
+            foreach (var oldDirection in item.Directions)
+            {
+                var newDirection = recipe.Directions.SingleOrDefault(x => x.Id == oldDirection.Id);
+                if (newDirection != null)
+                {
+                    oldDirection.StepInstruction = newDirection.StepInstruction;
+                }
+            }
             await UnitOfWork.SaveChangesAsync();
         }
 

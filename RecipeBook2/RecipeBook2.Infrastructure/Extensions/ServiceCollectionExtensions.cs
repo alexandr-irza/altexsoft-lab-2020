@@ -21,6 +21,7 @@ namespace RecipeBook2.Infrastructure.Extensions
             services.AddScoped<NavigationController>();
             services.AddScoped<RecipeController>();
             services.AddScoped<CategoryController>();
+            services.AddScoped<IngredientController>();
 
             return services;
         }

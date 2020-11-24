@@ -24,7 +24,6 @@ namespace RecipeBook2.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CategoryConfig());
             modelBuilder.ApplyConfiguration(new RecipeConfig());
             modelBuilder.ApplyConfiguration(new IngredientConfig());
